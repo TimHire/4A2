@@ -10,6 +10,8 @@
       type(t_appvars), intent(out) :: av
       type(t_bconds), intent(out) :: bcs
       character(len=80) :: tempname
+      integer :: d_max, nsteps, ni, nj
+      real :: gam, rgas, cfl, sfac, pstag, tstag, alpha, rfin, rostag, p_out
 
 !     Read the case name and trim to the required length
       read(5,*) tempname
@@ -22,6 +24,8 @@
 !         nsteps
 !         ni, nj
 !     INSERT
+      read(5,*) av%gam, av%rgas, av%cfl, av%sfac, av%d_max, av%nsteps, av%ni, av%nj
+
 
 !     Calculate other gas constants used throughout the calculation
       av%cp = av%rgas * av%gam / (av%gam - 1.0)
@@ -40,15 +44,23 @@
 !     Read the inlet boundary condition data and store into the "bcs" datatype
 !         pstag, tstag, alpha, rfin
 !     INSERT
-
+      read(5,*) pstag, tstag, alpha, rfin
+      bcs%pstag = pstag
+      bcs%tstag = tstag
+      bcs%alpha = alpha
+      bcs%rfin = rfin
+      
 !     Convert the inlet angle to radians
       bcs%alpha = bcs%alpha * 3.14159 / 180.0
 
 !     Calculate the inlet stagnation density "rostag"
 !     INSERT
+      rostag = bcs%pstag / (av%rgas * bcs%tstag)
 
 !     Read the outlet static pressure and store into the "bcs" datatype
 !     INSERT
+      read(5,*) p_out
+      bcs%p_out = p_out
 
 !     Print the settings to check they have been read, you can use this syntax
 !     anywhere else you want in the program to debug your code
