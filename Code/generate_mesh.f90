@@ -10,11 +10,12 @@
       implicit none
       type(t_geometry), intent(in) :: geom
       type(t_grid), intent(inout) :: g
-      real :: si_a(geom%ni_a), si_b(geom%ni_b), si(g%ni)
+      real :: si_a(geom%ni_a), si_b(geom%ni_b), si(g%ni), sj(g%nj)
       integer :: ni, nj
 
 !     Declare integers or any extra variables you need here
 !     INSERT
+      integer :: i
 
 !     Get the size of the mesh and store locally for convenience
       ni = g%ni; nj = g%nj;
@@ -37,7 +38,13 @@
 !     Create a new vector of non-dimensional spacings in the j-direction using 
 !     "linspace", loop over the mesh in the i-direction and calculate the
 !     intermediate coordinates from a weighted sum of the two boundaries
-!     INSERT
+      call linspace (0.0, 1.0, sj)
+      do i=1, ni
+!         Only considering the interior points as the outside points are defined by the input geometry
+!	  Use a weighted sum of the values at each of the walls along with the current linspace value for proportions
+      	  g%x(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%x(i, 1) + sj(2:nj-1)*g%x(i, nj)
+      	  g%y(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%y(i, 1) + sj(2:nj-1)*g%y(i, nj)
+      end do
 
 !     In all of the test cases for the basic solver the the "j = 1" and "j = nj"
 !     boundaries are walls, for the extensions you may need to return to this

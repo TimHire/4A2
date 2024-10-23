@@ -23,7 +23,6 @@
 !         cfl, sfac, d_max
 !         nsteps
 !         ni, nj
-!     INSERT
       read(5,*) av%gam, av%rgas, av%cfl, av%sfac, av%d_max, av%nsteps, av%ni, av%nj
 
 
@@ -54,11 +53,9 @@
       bcs%alpha = bcs%alpha * 3.14159 / 180.0
 
 !     Calculate the inlet stagnation density "rostag"
-!     INSERT
       rostag = bcs%pstag / (av%rgas * bcs%tstag)
 
 !     Read the outlet static pressure and store into the "bcs" datatype
-!     INSERT
       read(5,*) p_out
       bcs%p_out = p_out
 
