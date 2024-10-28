@@ -32,9 +32,11 @@
 
 !     Print the calculated timestep and some intermediate values
 !     INSERT
+      write(6,*)
       write(6,*) 'Calculated timestep:', av%dt
       write(6,*) 'Calculated astag:', astag
       write(6,*) 'Calculated v_max:', v_max
+      write(6,*)
 
       end subroutine set_timestep
 

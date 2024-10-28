@@ -12,6 +12,8 @@
 
 !     Define any further variables you may need
 !     INSERT
+      
+      
 
 !     The primary flow variables are "ro", "roe", "rovx" and "rovy", these are 
 !     the conserved quantities within the Euler equations. Write the code to
@@ -21,6 +23,10 @@
 !     loops as the operations can be performed elementwise, although you may
 !     wish to define some intermediate variables to improve readability.
 !     INSERT
+      g%vx = g%rovx / g%ro
+      g%vy = g%rovy / g%ro
+      g%p = (av%rgas/av%cv) * (g%roe - g%ro * 0.5 * hypot(g%vx, g%vy)**2)
+      g%hstag = (g%roe + g%p) / g%ro
 
       end subroutine set_secondary
 

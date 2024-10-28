@@ -94,7 +94,7 @@
 !             6. Update the estimate of the velocity "v_guess(i)" 
 !         INSERT
           v_guess = mass_flow_out / (ro_out * l_i)
-          temp = max(t_lim, bcs%tstag - 0. * v_guess**2 / av%cp)
+          temp = max(t_lim, bcs%tstag - 0.5 * v_guess**2 / av%cp)
           ro_guess = (bcs%pstag * (temp/bcs%tstag)**(av%gam/(av%gam - 1)) ) / (av%rgas * temp)
           v_guess = mass_flow_out / (ro_guess * l_i)
 

@@ -37,10 +37,13 @@
 !     "maxval" and "abs" intrinsic functions.
 !     INSERT
 !     Consider the absolute difference in the lengths of the x and y sides separately
-      x_error = maxval(abs(g%lx_i(1:ni-2, 1:nj-2) + g%lx_j(1:ni-2, 1:nj-2) - g%lx_i(2:ni-1, 1:nj-2) - g%lx_j(1:ni-2, 2:nj-1)))
-      y_error = maxval(abs(g%lx_i(1:ni-2, 1:nj-2) + g%ly_j(1:ni-2, 1:nj-2) - g%ly_i(2:ni-1, 1:nj-2) - g%ly_j(1:ni-2, 2:nj-1)))
+      x_error = maxval(abs(g%lx_i(1:ni-2, 1:nj-2) + g%lx_j(1:ni-2, 1:nj-2) - &
+      g%lx_i(2:ni-1, 1:nj-2) - g%lx_j(1:ni-2, 2:nj-1)))
+      y_error = maxval(abs(g%ly_i(1:ni-2, 1:nj-2) + g%ly_j(1:ni-2, 1:nj-2) - &
+      g%ly_i(2:ni-1, 1:nj-2) - g%ly_j(1:ni-2, 2:nj-1)))
+      
       if (x_error > tol .or. y_error > tol) then
-          write(6,*) 'Error of', max(x_error, y_error), 'has been found which is later than the tolerance of', tol
+          write(6,*) 'Error of', x_error, y_error, 'has been found which is later than the tolerance of', tol
           stop
       end if
       	
