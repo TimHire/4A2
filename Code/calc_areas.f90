@@ -30,9 +30,9 @@
 !          	g%area(i, j) = 0.5 * ( (g%x(i+1, j+1) - g%x(i, j)) * (g%y(i, j+1) - g%y(i+1, j)) - (g%y(i+1, j+1) - g%y(i,j)) * (g%x(i, j+1) - g%x(i+1, j)) )
 !          end
 !      end
-      g%area(1:ni-1, 1: nj-1) = 0.5 * ( (g%x(2:ni, 2:nj) - g%x(1:ni-1, 1:nj-1)) * &
-      (g%y(1:ni-1, 2:nj) - g%y(2:ni, 1:nj-1)) - (g%y(2:ni, 2:nj) - g%y(1:ni-1,1:nj-1)) * &
-      (g%x(1:ni-1, 2:nj) - g%x(2:ni, 1:nj-1)) )
+      g%area(1:ni-1, 1: nj-1) = 0.5 * ( ((g%x(2:ni, 2:nj) - g%x(1:ni-1, 1:nj-1)) * &
+      (g%y(1:ni-1, 2:nj) - g%y(2:ni, 1:nj-1))) - ((g%y(2:ni, 2:nj) - g%y(1:ni-1,1:nj-1)) * &
+      (g%x(1:ni-1, 2:nj) - g%x(2:ni, 1:nj-1))) )
 
 !     Calculate the projected lengths in the x and y-directions on all of the
 !     "i = const" facets and store them in g%lx_i and g%ly_i. When combined
@@ -42,14 +42,18 @@
 !     towards the centre of the i,j cell
 !     INSERT
 !     Not considering the side length of the outside most cells 
-      g%lx_i(1:ni, 1:nj-1) = g%y(1:ni, 2:nj) - g%y(1:ni, 1:nj-1)
-      g%ly_i(1:ni, 1:nj-1) = g%x(1:ni, 1:nj-1) - g%x(1:ni, 2:nj)
+!      g%lx_i(1:ni, 1:nj-1) = g%y(1:ni, 2:nj) - g%y(1:ni, 1:nj-1)
+!      g%ly_i(1:ni, 1:nj-1) = g%x(1:ni, 1:nj-1) - g%x(1:ni, 2:nj)
+      g%lx_i = g%y(:, 2:nj) - g%y(:, 1:nj-1)
+      g%ly_i = g%x(:, 1:nj-1) - g%x(:, 2:nj)
 
 !     Now repeat the calculation for the project lengths on the "j=const"
 !     facets. 
 !     INSERT
-      g%lx_j(1:ni-1, 1:nj) = g%y(1:ni-1, 1:nj) - g%y(2:ni, 1:nj)
-      g%ly_j(1:ni-1, 1:nj) = g%x(2:ni, 1:nj) - g%x(1:ni-1, 1:nj)
+!      g%lx_j(1:ni-1, 1:nj) = g%y(1:ni-1, 1:nj) - g%y(2:ni, 1:nj)
+!      g%ly_j(1:ni-1, 1:nj) = g%x(2:ni, 1:nj) - g%x(1:ni-1, 1:nj)
+      g%lx_j = g%y(1:ni-1, :) - g%y(2:ni, :)
+      g%ly_j = g%x(2:ni, :) - g%x(1:ni-1, :)
 
 !     Find the minimum length scale in the mesh, this is defined as the length
 !     of the shortest side of all the cells. Call this length "l_min", it is used

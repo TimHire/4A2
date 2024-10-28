@@ -9,7 +9,7 @@
       use types
       implicit none
       type(t_grid), intent(inout) :: g
-      real :: area_min, dx_error, dy_error, tol
+      real :: area_min, dx_error, dy_error, tol, min_area, x_error, y_error
       integer :: ni, nj
 
 !     Get the size of the mesh and store locally for convenience
@@ -24,12 +24,26 @@
 !     and flag negative numbers as an error with an if statement to "stop" the
 !     program
 !     INSERT
+      min_area = minval(g%area)
+      if (min_area < 0) then
+          write(6,*) 'Negative cell area found, stopping program'
+          stop
+      end if 
+      	  
 
 !     Next check that the sum of the edge vectors around every quadrilateral is 
 !     very nearly zero in both the x and y-coordinate directions. You can
 !     complete this with some elementwise addition of the arrays and use of the
 !     "maxval" and "abs" intrinsic functions.
 !     INSERT
+!     Consider the absolute difference in the lengths of the x and y sides separately
+      x_error = maxval(abs(g%lx_i(1:ni-2, 1:nj-2) + g%lx_j(1:ni-2, 1:nj-2) - g%lx_i(2:ni-1, 1:nj-2) - g%lx_j(1:ni-2, 2:nj-1)))
+      y_error = maxval(abs(g%lx_i(1:ni-2, 1:nj-2) + g%ly_j(1:ni-2, 1:nj-2) - g%ly_i(2:ni-1, 1:nj-2) - g%ly_j(1:ni-2, 2:nj-1)))
+      if (x_error > tol .or. y_error > tol) then
+          write(6,*) 'Error of', max(x_error, y_error), 'has been found which is later than the tolerance of', tol
+          stop
+      end if
+      	
 
 !     It may be worthwhile to complete some other checks, the prevous call to
 !     the "write_output" subroutine has written a file that you can read and
