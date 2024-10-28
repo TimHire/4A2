@@ -24,8 +24,8 @@
 !     INSERT
       mass_i = ((g%rovx(:,1:nj-1) + g%rovx(:,2:nj)) * g%lx_i(:,1:nj-1) +&
                (g%rovy(:,1:nj-1) + g%rovy(:,2:nj)) * g%ly_i(:,1:nj-1)) / 2
-      mass_j = ((g%rovx(1:ni-1,:) + g%rovx(2:ni,:)) * g%lx_i(1:ni-1,:) +&
-               (g%rovy(1:ni-1,:) + g%rovy(2:ni,:)) * g%ly_i(1:ni-1,:)) / 2
+      mass_j = ((g%rovx(1:ni-1,:) + g%rovx(2:ni,:)) * g%lx_j(1:ni-1,:) +&
+               (g%rovy(1:ni-1,:) + g%rovy(2:ni,:)) * g%ly_j(1:ni-1,:)) / 2
      
 !     Apply the wall boundary condition by checking that two nodes at the
 !     end of a facet are both on a wall, if so then the appropriate mass
@@ -49,10 +49,14 @@
 !     INSERT
       call sum_fluxes(av,flux_i,flux_j,g%area,g%roe,g%droe)
 
+
+
+!     After discussing with Felix decided needed to do pressure times lenth for each section before averaging
+
 !     Setup the x-momentum equation including momentum flux and pressure forces
 !     INSERT
-      flux_i = (mass_i * (g%vx(:,1:nj-1) + g%vx(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj)) * g%lx_i(:,1:nj-1)) / 2
-      flux_j = (mass_j * (g%vx(1:ni-1,:) + g%vx(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:)) * g%lx_j(1:ni-1,:)) / 2
+      flux_i = (mass_i * (g%vx(:,1:nj-1) + g%vx(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj) ) * g%lx_i ) / 2
+      flux_j = (mass_j * (g%vx(1:ni-1,:) + g%vx(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:) ) * g%lx_j ) / 2
 
 !     Update the x-momentum with momentum flux
 !     INSERT
@@ -60,8 +64,8 @@
 
 !     Setup the y-momentum equation including momentum flux and pressure forces
 !     INSERT
-      flux_i = (mass_i * (g%vy(:,1:nj-1) + g%vy(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj)) * g%lx_i(:,1:nj-1)) / 2
-      flux_j = (mass_j * (g%vy(1:ni-1,:) + g%vy(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:)) * g%lx_j(1:ni-1,:)) / 2
+      flux_i = (mass_i * (g%vy(:,1:nj-1) + g%vy(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj) ) * g%ly_i ) / 2
+      flux_j = (mass_j * (g%vy(1:ni-1,:) + g%vy(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:) ) * g%ly_j ) / 2
 
 !     Update the y-momentum with momentum flux
 !     INSERT

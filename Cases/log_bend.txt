@@ -17,4 +17,16 @@
  Calculated cell areas and facet lengths
    Overall minimum element size =    5.55545092E-03
 
- Error of   7.85690546E-03 has been found which is later than the tolerance of   5.55545057E-07
+
+ Printing the first elements of the improved guesses
+ ro =  0.742421806     rovx =   164.718460     rovy =   164.718460     roe =   170160.562    
+
+ Calculated timestep:   3.20024856E-06
+ Calculated astag:   347.188721    
+ Calculated v_max:   694.377441    
+
+ Time step number            5
+   d_max = 0.299E+25 at i =   1, j =   1, d_avg =       NaN
+ NaN detected, stopping the solver
+ "ifstop" modified, writing an output
+ Solver stopped prematurely
