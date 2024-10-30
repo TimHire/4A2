@@ -14,7 +14,7 @@
 
 !     Declare the other variables you need here
 !     INSERT
-      real :: t(g%nj), v(g%nj), p(g%nj)
+      real :: t(g%nj), v(g%nj)
 
 !     At the inlet boundary the change in density is driven towards "rostag",
 !     which is then used to obtain the other flow properties to match the
