@@ -23,13 +23,13 @@ def calc_secondary(av,b):
     # INSERT
     b['vx'] = b['rovx'] / b['ro']
     b['vy'] = b['rovy'] / b['ro']
-    b['v'] = np.sqrt(b['vx']**2 + v['vy']**2)
+    b['v'] = np.sqrt(b['vx']**2 + b['vy']**2)
     b['t'] = (b['roe'] - b['ro'] * 0.5 * b['v']**2) / (b['ro'] * av['cv'])
     b['tstag'] = b['t'] + 0.5 * b['v']**2 / av['cp']
     b['p'] = b['ro'] * av['rgas'] * b['t']
     b['pstag'] = b['p'] + 0.5 * b['ro'] * b['v']**2
     b['mach'] = b['v'] / np.sqrt(av['gam'] * av['rgas'] * b['t'])
-    b['alpha'] = np.atan(b['vy'], b['vx']) / np.pi * 180
+    b['alpha'] = np.arctan(b['vy'], b['vx']) / np.pi * 180
     b['hstag'] = (b['roe'] + b['p']) / b['ro']
 
     return b

@@ -81,7 +81,7 @@
 !         called "t_lim"
 !         INSERT
 !         HOW DO YOU DECIDE WHAT THE MACH LIMIT IS????????/
-          mach_lim = 0.99
+          mach_lim = 1.0
           t_lim = bcs%tstag / (1 + 0.5 * (av%gam - 1) * mach_lim**2)
 
 !         Now estimate the velocity and density at every "i = const" line, call 
@@ -104,7 +104,7 @@
 !         crude guess. Then set all of ro, roe, rovx and rovy, note that roe 
 !         includes the kinetic energy component of the internal energy.
 !         INSERT 
-          do j = 1, nj-1
+          do j = 1, nj
              do i = 1,ni-1
                  lx = g%lx_j(i,j); ly = g%ly_j(i,j); 
                  l = hypot(lx,ly)
@@ -119,9 +119,9 @@
 !         INSERT
 !         Copy the penultimate entries to the final entry
           g%ro(ni,:) = g%ro(ni-1,:)
-          g%rovx(ni,:) = g%ro(ni-1,:)
-          g%rovy(ni,:) = g%ro(ni-1,:)
-          g%roe(ni,:) = g%ro(ni-1,:)
+          g%rovx(ni,:) = g%rovx(ni-1,:)
+          g%rovy(ni,:) = g%rovy(ni-1,:)
+          g%roe(ni,:) = g%roe(ni-1,:)
           
 
 !         Print the first elements of the guess like for the crude guess

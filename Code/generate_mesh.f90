@@ -42,8 +42,8 @@
       do i=1, ni
 !         Only considering the interior points as the outside points are defined by the input geometry
 !	  Use a weighted sum of the values at each of the walls along with the current linspace value for proportions
-      	  g%x(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%x(i, 1) + sj(2:nj-1)*g%x(i, nj)
-      	  g%y(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%y(i, 1) + sj(2:nj-1)*g%y(i, nj)
+      	  g%x(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%x(i,1) + sj(2:nj-1)*g%x(i,nj)
+      	  g%y(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%y(i,1) + sj(2:nj-1)*g%y(i,nj)
       end do
 
 !     In all of the test cases for the basic solver the the "j = 1" and "j = nj"

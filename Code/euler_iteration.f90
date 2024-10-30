@@ -24,6 +24,7 @@
 !     INSERT
       mass_i = ((g%rovx(:,1:nj-1) + g%rovx(:,2:nj)) * g%lx_i(:,1:nj-1) +&
                (g%rovy(:,1:nj-1) + g%rovy(:,2:nj)) * g%ly_i(:,1:nj-1)) / 2
+               
       mass_j = ((g%rovx(1:ni-1,:) + g%rovx(2:ni,:)) * g%lx_j(1:ni-1,:) +&
                (g%rovy(1:ni-1,:) + g%rovy(2:ni,:)) * g%ly_j(1:ni-1,:)) / 2
      

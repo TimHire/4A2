@@ -43,21 +43,16 @@
 !     Read the inlet boundary condition data and store into the "bcs" datatype
 !         pstag, tstag, alpha, rfin
 !     INSERT
-      read(5,*) pstag, tstag, alpha, rfin
-      bcs%pstag = pstag
-      bcs%tstag = tstag
-      bcs%alpha = alpha
-      bcs%rfin = rfin
+      read(5,*) bcs%pstag, bcs%tstag, bcs%alpha, bcs%rfin
       
 !     Convert the inlet angle to radians
       bcs%alpha = bcs%alpha * 3.14159 / 180.0
 
 !     Calculate the inlet stagnation density "rostag"
-      rostag = bcs%pstag / (av%rgas * bcs%tstag)
+      bcs%rostag = bcs%pstag / (av%rgas * bcs%tstag)
 
 !     Read the outlet static pressure and store into the "bcs" datatype
-      read(5,*) p_out
-      bcs%p_out = p_out
+      read(5,*) bcs%p_out
 
 !     Print the settings to check they have been read, you can use this syntax
 !     anywhere else you want in the program to debug your code
