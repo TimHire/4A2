@@ -41,7 +41,7 @@
 !     Need to calculate the velocities for each cell at the inlet
       t = bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)
       v = sqrt(2 * av%cp * (bcs%tstag - t))
-      p = bcs%ro * av%rgas * t
+      g%p(1,:) = bcs%ro * av%rgas * t
       
       g%vx(1,:) = v * cos(bcs%alpha)
       g%vy(1,:) = v * sin(bcs%alpha)
