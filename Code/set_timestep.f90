@@ -23,7 +23,6 @@
 !     flows. In the latter case the length of the time step as determined by 
 !     may need to be reduced by improving this routine or varying the CFL number
 !     INSERT
-!     CHECK WHETHER THERE SHOULD BE A FACTOR OF 2 HERE OR NOT --> Needs to be a 2 otherwise there is an error
       v_max = astag * 2
 
 !     Calculate the timestep using the CFL number and store it in "av%dt"

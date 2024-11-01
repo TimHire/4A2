@@ -10,7 +10,7 @@
       type(t_geometry), intent(out) :: geom
       
 !     Declare an integer to count the number of points in the curve as you loop
-      integer :: i
+      integer :: n
 
 !     Open the file and assign to unit 1
       open(1,file='geom_' // av%casename // '.txt')
@@ -22,10 +22,9 @@
 
 !     Read the x and y coordinates of the curve from the file, create a do loop
 !     that iterates from 1 to "geom%ni_a", the length of the first domain curve
-!      do n = 1, geom%ni_a
-!	  read(1,*) geom%x_a(n), geom%y_a(n)
-!      end do
-      read(1,*) (geom%x_a(i),geom%y_a(i),i=1,geom%ni_a)
+      do n = 1, geom%ni_a
+	  read(1,*) geom%x_a(n), geom%y_a(n)
+      end do
 
 !     Repeat the process for the second curve, read its length, allocate the
 !     memory, then read the coordinates line by line from the file
@@ -34,10 +33,9 @@
 
 !     Read the x and y coordinates of the curve from the file, create a do loop
 !     that iterates from 1 to "geom%ni_a", the length of the first domain curve
-      read(1,*) (geom%x_b(i),geom%y_b(i),i=1,geom%ni_b)
-!      do n = 1, geom%ni_b
-!	  read(1,*) geom%x_b(n), geom%y_b(n)
-!      end do
+      do n = 1, geom%ni_b
+	  read(1,*) geom%x_b(n), geom%y_b(n)
+      end do
 
 !     Print the lengths of the curves that have been successfully read
       write(6,*) 'Read domain curves from file'

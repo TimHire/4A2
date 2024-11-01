@@ -80,7 +80,6 @@
 !         guess, call this "mach_lim", calculate the corresponding temperature,
 !         called "t_lim"
 !         INSERT
-!         HOW DO YOU DECIDE WHAT THE MACH LIMIT IS????????/
           mach_lim = 1.0
           t_lim = bcs%tstag / (1 + 0.5 * (av%gam - 1) * mach_lim**2)
 
