@@ -37,7 +37,7 @@
 !     Update the density with mass fluxes by calling "sum_fluxes"
 !     INSERT
 !     Parsing in out mass functions so also need to parse in related cell property ro and its derivative dro
-      call sum_fluxes(av,mass_i,mass_j,g%area,g%ro,g%dro)
+      call sum_fluxes(av,mass_i,mass_j,g%area,g%ro_start,g%dro)
 
 !     Setup the conservation of energy equation by calculated the enthalpy flux
 !     and storing the values in "flux_i" and "flux_j", you will need "mass_i"
@@ -48,7 +48,7 @@
 
 !     Update the internal energy with enthalpy fluxes
 !     INSERT
-      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe,g%droe)
+      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe_start,g%droe)
 
 
 
@@ -61,7 +61,7 @@
 
 !     Update the x-momentum with momentum flux
 !     INSERT
-      call sum_fluxes(av,flux_i,flux_j,g%area,g%rovx,g%drovx)
+      call sum_fluxes(av,flux_i,flux_j,g%area,g%rovx_start,g%drovx)
 
 !     Setup the y-momentum equation including momentum flux and pressure forces
 !     INSERT
@@ -70,13 +70,23 @@
 
 !     Update the y-momentum with momentum flux
 !     INSERT
-      call sum_fluxes(av,flux_i,flux_j,g%area,g%rovy,g%drovy)
+      call sum_fluxes(av,flux_i,flux_j,g%area,g%rovy_start,g%drovy)
+     
+     
+!     Reset the variables to be used again in the solver loop
+      g%ro = g%ro_start
+      g%roe = g%roe_start
+      g%rovx = g%rovx_start
+      g%rovy = g%rovy_start
 
 !     Add artificial viscosity by smoothing all of the primary flow variables
       call smooth_array(av,g%ro)
       call smooth_array(av,g%roe)
       call smooth_array(av,g%rovx)
       call smooth_array(av,g%rovy)
+      
+      
+
       
 
       end subroutine euler_iteration
