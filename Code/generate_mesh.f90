@@ -11,11 +11,13 @@
       type(t_geometry), intent(in) :: geom
       type(t_grid), intent(inout) :: g
       real :: si_a(geom%ni_a), si_b(geom%ni_b), si(g%ni), sj(g%nj)
+      real :: si1(g%ni), si2(g%ni)
       integer :: ni, nj
 
 !     Declare integers or any extra variables you need here
 !     INSERT
-      integer :: i
+      integer :: i, x
+      real :: ri, rj, percent
 
 !     Get the size of the mesh and store locally for convenience
       ni = g%ni; nj = g%nj;
@@ -24,7 +26,17 @@
 !     generate linearly spaced points in i-direction at desired mesh resolution
       call dist(geom%x_a,geom%y_a,1,si_a)
       call dist(geom%x_b,geom%y_b,1,si_b)
-      call linspace(0.0,1.0,si)
+!      call linspace(0.0,1.0,si)
+      
+!     Splitting up the x direction into 2 sections and then appending the meshes together
+      percent = 0.3
+      ri = 0.1
+      x = nint(percent * ni) + 2
+      call geometric(0.0, percent, x, 1.0-ri, si1)
+!     Need to ensure there is a space between the two appended arrays which is arbitrary
+      call geometric(percent+0.005, 1.0, ni-x, 1.0+ri, si2)
+      si(:x) = si1(:x)
+      si(x+1:) = si2(:ni-x)
 
 !     Interpolate the geometry curves to the required resolution in the 
 !     i-direction, this allows the mesh to be refined without altering the 
@@ -38,7 +50,13 @@
 !     Create a new vector of non-dimensional spacings in the j-direction using 
 !     "linspace", loop over the mesh in the i-direction and calculate the
 !     intermediate coordinates from a weighted sum of the two boundaries
-      call linspace (0.0, 1.0, sj)
+!      call linspace(0.0,1.0,sj)
+      
+!     Define the common ratio for the j direction geometric sequence
+      rj = 1.06
+      call geometric (0.0, 1.0, nj, rj, sj)
+      
+         
       do i=1, ni
 !         Only considering the interior points as the outside points are defined by the input geometry
 !	  Use a weighted sum of the values at each of the walls along with the current linspace value for proportions

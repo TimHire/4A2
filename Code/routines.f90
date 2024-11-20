@@ -66,7 +66,31 @@
       end subroutine linspace
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      subroutine geometric(x1,x2,i,r,x)
+
+!     Create a vector of linearly space values between two limits
      
+!     Explicitly declare the required variables, the size is assumed
+      implicit none
+      real, intent(in) :: x1, x2, r
+      integer, intent(in) :: i
+      real, intent(out) :: x(:)
+      integer :: n
+      real :: a
+
+!     Starting value
+      a = (x2 - x1) * (r - 1) / (r**(i-1) - 1)
+
+!     Loop over all indices of x and calculate its value
+      do n = 1,i
+          x(n) = x1 + a * (1 - r ** (n-1))/(1-r)
+      end do
+
+      end subroutine geometric
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          
       subroutine interp(x,y,xp,yp)
 
 !     Piecewise linear 1D interpolation of a curve to new values, input data
