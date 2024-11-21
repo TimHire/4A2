@@ -17,7 +17,7 @@
 !     Declare integers or any extra variables you need here
 !     INSERT
       integer :: i, x
-      real :: ri, rj, percent
+      real :: ri, rj, percent, middle
 
 !     Get the size of the mesh and store locally for convenience
       ni = g%ni; nj = g%nj;
@@ -30,11 +30,14 @@
       
 !     Splitting up the x direction into 2 sections and then appending the meshes together
       percent = 0.3
-      ri = 0.1
-      x = nint(percent * ni) + 2
+      ri = 0.07
+!     Need to add some offset so less small cells on the right side
+      x = nint(percent * ni) + nint(0.1 * ni)
       call geometric(0.0, percent, x, 1.0-ri, si1)
+!     Get the smallest interval of the first section
+      middle = si1(x) - si1(x-1)
 !     Need to ensure there is a space between the two appended arrays which is arbitrary
-      call geometric(percent+0.005, 1.0, ni-x, 1.0+ri, si2)
+      call geometric(percent+middle, 1.0, ni-x, 1.0+ri, si2)
       si(:x) = si1(:x)
       si(x+1:) = si2(:ni-x)
 
