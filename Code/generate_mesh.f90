@@ -26,7 +26,6 @@
 !     generate linearly spaced points in i-direction at desired mesh resolution
       call dist(geom%x_a,geom%y_a,1,si_a)
       call dist(geom%x_b,geom%y_b,1,si_b)
-!      call linspace(0.0,1.0,si)
       
 !     Splitting up the x direction into 2 sections and then appending the meshes together
       percent = 0.3
@@ -40,6 +39,7 @@
       call geometric(percent+middle, 1.0, ni-x, 1.0+ri, si2)
       si(:x) = si1(:x)
       si(x+1:) = si2(:ni-x)
+!      call linspace(0.0,1.0,si)
 
 !     Interpolate the geometry curves to the required resolution in the 
 !     i-direction, this allows the mesh to be refined without altering the 
@@ -53,11 +53,12 @@
 !     Create a new vector of non-dimensional spacings in the j-direction using 
 !     "linspace", loop over the mesh in the i-direction and calculate the
 !     intermediate coordinates from a weighted sum of the two boundaries
-!      call linspace(0.0,1.0,sj)
+
       
 !     Define the common ratio for the j direction geometric sequence
       rj = 1.06
       call geometric (0.0, 1.0, nj, rj, sj)
+ !     call linspace(0.0,1.0,sj)
       
          
       do i=1, ni

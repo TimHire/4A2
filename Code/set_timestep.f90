@@ -11,7 +11,7 @@
       type(t_grid), intent(in) :: g
       type(t_bconds), intent(in) :: bcs
       real :: astag, v_max
-
+   
 !     Calculate the stagnation speed of sound from the inlet stagnation
 !     temperature and gas constants
 !     INSERT
@@ -32,7 +32,7 @@
 !     Print the calculated timestep and some intermediate values
 !     INSERT
       write(6,*)
-      write(6,*) 'Calculated timestep:', av%dt_total
+      write(6,*) 'Calculated timestep:', av(n)%dt_total
       write(6,*) 'Calculated astag:', astag
       write(6,*) 'Calculated v_max:', v_max
       write(6,*)

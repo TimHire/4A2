@@ -8,13 +8,11 @@
       use types
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(inout) :: g
+      type(t_grid), intent(inout) :: g(:)
       type(t_bconds), intent(in) :: bcs
 
 !     Define any further variables you may need
 !     INSERT
-      
-      
 
 !     The primary flow variables are "ro", "roe", "rovx" and "rovy", these are 
 !     the conserved quantities within the Euler equations. Write the code to
@@ -29,9 +27,9 @@
 !      g%p = (av%rgas/av%cv) * (g%roe - g%ro * 0.5 * hypot(g%vx, g%vy)**2)
  !     g%hstag = (g%roe + g%p) / g%ro
       g%hstag = av%cp * bcs%tstag        ! constant stagnation enthalpy improvement
-      g%p = (g%ro * av%rgas / av%cv) * (g%hstag - 0.5 * hypot(g%vx, g%vy)**2) / (1 + (av%rgas / av%cv))
-      
-      
+      g%p = (g%ro * av%rgas / av%cv) * (g%hstag - 0.5 * hypot(g%vx, g%vy)**2) &
+      / (1 + (av%rgas / av%cv))
+     
 
       end subroutine set_secondary
 

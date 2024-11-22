@@ -59,8 +59,10 @@
 
 !     Setup the x-momentum equation including momentum flux and pressure forces
 !     INSERT
-      flux_i = (mass_i * (g%vx(:,1:nj-1) + g%vx(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj) ) * g%lx_i ) / 2
-      flux_j = (mass_j * (g%vx(1:ni-1,:) + g%vx(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:) ) * g%lx_j ) / 2
+      flux_i = (mass_i * (g%vx(:,1:nj-1) + g%vx(:,2:nj)) + (g%p(:,1:nj-1) + &
+      g%p(:,2:nj) ) * g%lx_i ) / 2
+      flux_j = (mass_j * (g%vx(1:ni-1,:) + g%vx(2:ni,:)) + (g%p(1:ni-1,:) + &
+      g%p(2:ni,:) ) * g%lx_j ) / 2
 
 !     Update the x-momentum with momentum flux
 !     INSERT
@@ -68,8 +70,10 @@
 
 !     Setup the y-momentum equation including momentum flux and pressure forces
 !     INSERT
-      flux_i = (mass_i * (g%vy(:,1:nj-1) + g%vy(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj) ) * g%ly_i ) / 2
-      flux_j = (mass_j * (g%vy(1:ni-1,:) + g%vy(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:) ) * g%ly_j ) / 2
+      flux_i = (mass_i * (g%vy(:,1:nj-1) + g%vy(:,2:nj)) + (g%p(:,1:nj-1) + g%p(:,2:nj) )&
+       * g%ly_i ) / 2
+      flux_j = (mass_j * (g%vy(1:ni-1,:) + g%vy(2:ni,:)) + (g%p(1:ni-1,:) + g%p(2:ni,:) )&
+       * g%ly_j ) / 2
 
 !     Update the y-momentum with momentum flux
 !     INSERT
@@ -78,7 +82,7 @@
      
 !     Reset the variables to be used again in the solver loop
       g%ro = g%ro_start
-   !   g%roe = g%roe_start
+!      g%roe = g%roe_start
       g%rovx = g%rovx_start
       g%rovy = g%rovy_start
 
@@ -87,9 +91,6 @@
   !    call smooth_array(av,g%roe)
       call smooth_array(av,g%rovx)
       call smooth_array(av,g%rovy)
-      
-      
-
       
 
       end subroutine euler_iteration

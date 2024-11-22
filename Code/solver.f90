@@ -20,10 +20,11 @@
       type(t_bconds) :: bcs
       type(t_match) :: p
       type(t_geometry) :: geom
-      type(t_grid) :: g
+      type(t_grid), allocatable :: g(:)
       real :: d_max = 1, d_avg = 1
       integer :: nstep, nconv = 5, ncheck = 5
       integer :: nrkut, nrkuts = 4
+      integer :: n
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
@@ -50,13 +51,13 @@
       end if
 
 !     Calculate cell areas and facet lengths
-      call calc_areas(g)
+      call calc_areas(g, av)
 
 !     Optional output call to inspect the mesh you have generated
-      call write_output(av,g,1)
+!      call write_output(av,g,1)
 
 !     Check that the areas and projected lengths are correct
-      call check_mesh(g)
+      call check_mesh(g,av)
 
 !     Calculate the initial guess of the flowfield in the domain. There are two
 !     options that can be chosen with the input argument "guesstype":
@@ -70,11 +71,9 @@
       call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
-      call write_output(av,g,2)
+!      call write_output(av,g,2)
 
-!     Set the length of the timestep, initially this is a constant based on a 
-!     conservative guess of the mach number
-      call set_timestep(av,g,bcs)
+
 
 !     Open file to store the convergence history. This is human readable during
 !     a long run by using "tail -f conv_example.csv" in a terminal window
@@ -89,29 +88,33 @@
 !     Start the time stepping do loop for "nsteps". This is now the heart of the
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
+      do n=1,av%nn
       do nstep = 1, av%nsteps
 
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
           
-          g%ro_start = g%ro
+          g(n)%ro_start = g(n)%ro
       !    g%roe_start = g%roe
-          g%rovx_start = g%rovx
-          g%rovy_start = g%rovy
+          g(n)%rovx_start = g(n)%rovx
+          g(n)%rovy_start = g(n)%rovy
           
           do nrkut = 1, nrkuts
+                  !     Set the length of the timestep, initially this is a constant based on a 
+                  !     conservative guess of the mach number
+                  call set_timestep(av,g(n),bcs)
           	  av%dt = av%dt_total / (1 + nrkuts - nrkut)
           	  
 !          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
-		  call set_secondary(av,g,bcs)
+		  call set_secondary(av,g(n),bcs)
 
 	!         Apply inlet and outlet values at the boundaries of the domain
-		  call apply_bconds(av,g,bcs)
+		  call apply_bconds(av,g(n),bcs)
 
 	!         Perform the timestep to update the primary flow variables
-		  call euler_iteration(av,g)
+		  call euler_iteration(av,g(n))
  	  end do
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
@@ -131,6 +134,7 @@
               exit
           end if
 
+      end do
       end do
 
 !     Calculation finished, call "write_output" to write the final, not 

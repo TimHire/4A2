@@ -14,9 +14,8 @@
           real :: rgas, gam, cp, cv, fgam
 
 !         Timestepping, smoothing and other run options
-          real ::  cfl, sfac, dt, d_max, d_avg
+          real ::  cfl, sfac, d_max, d_avg, dt_total, dt
           integer :: nsteps, nstep
-          real :: dt_total
 
 !         Reference values of the primary flow variables
           real :: ro_ref, roe_ref, rov_ref
