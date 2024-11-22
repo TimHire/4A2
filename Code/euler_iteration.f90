@@ -39,16 +39,19 @@
 !     Parsing in out mass functions so also need to parse in related cell property ro and its derivative dro
       call sum_fluxes(av,mass_i,mass_j,g%area,g%ro_start,g%dro)
 
+
+
 !     Setup the conservation of energy equation by calculated the enthalpy flux
 !     and storing the values in "flux_i" and "flux_j", you will need "mass_i"
 !     and "mass_j" from before
 !     INSERT
-      flux_i = mass_i * (g%hstag(:,1:nj-1) + g%hstag(:,2:nj)) / 2
-      flux_j = mass_j * (g%hstag(1:ni-1,:) + g%hstag(2:ni,:)) / 2
+!     Constant stagnation enthalpy improvement for efficiency so discarding this section
+!      flux_i = mass_i * (g%hstag(:,1:nj-1) + g%hstag(:,2:nj)) / 2
+!      flux_j = mass_j * (g%hstag(1:ni-1,:) + g%hstag(2:ni,:)) / 2
 
 !     Update the internal energy with enthalpy fluxes
 !     INSERT
-      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe_start,g%droe)
+!      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe_start,g%droe)
 
 
 
@@ -75,13 +78,13 @@
      
 !     Reset the variables to be used again in the solver loop
       g%ro = g%ro_start
-      g%roe = g%roe_start
+   !   g%roe = g%roe_start
       g%rovx = g%rovx_start
       g%rovy = g%rovy_start
 
 !     Add artificial viscosity by smoothing all of the primary flow variables
       call smooth_array(av,g%ro)
-      call smooth_array(av,g%roe)
+  !    call smooth_array(av,g%roe)
       call smooth_array(av,g%rovx)
       call smooth_array(av,g%rovy)
       

@@ -95,7 +95,7 @@
           av%nstep = nstep
           
           g%ro_start = g%ro
-          g%roe_start = g%roe
+      !    g%roe_start = g%roe
           g%rovx_start = g%rovx
           g%rovy_start = g%rovy
           
@@ -105,7 +105,7 @@
 !          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
-		  call set_secondary(av,g)
+		  call set_secondary(av,g,bcs)
 
 	!         Apply inlet and outlet values at the boundaries of the domain
 		  call apply_bconds(av,g,bcs)

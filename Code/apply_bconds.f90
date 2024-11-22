@@ -48,8 +48,9 @@
       g%vy(1,:) = v * sin(bcs%alpha)
       g%rovx(1,:) = g%vx(1,:) * bcs%ro
       g%rovy(1,:) = g%vy(1,:) * bcs%ro
-      g%roe(1,:) = bcs%ro * (av%cv * t + 0.5 * bcs%ro * v**2)
-      g%hstag(1,:) = (g%roe(1,:) + p) / bcs%ro 
+!      g%roe(1,:) = bcs%ro * (av%cv * t + 0.5 * bcs%ro * v**2)   ! constant stagnation enthalpy
+!      g%hstag(1,:) = (g%roe(1,:) + p) / bcs%ro 
+      g%hstag(1,:) = av%cp * bcs%tstag
 
 !     For the outlet boundary condition set the value of "p(ni,:)" to the
 !     specified value of static pressure "p_out" in "bcs"
