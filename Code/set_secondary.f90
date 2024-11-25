@@ -8,7 +8,7 @@
       use types
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(inout) :: g(:)
+      type(t_grid), intent(inout) :: g
       type(t_bconds), intent(in) :: bcs
 
 !     Define any further variables you may need

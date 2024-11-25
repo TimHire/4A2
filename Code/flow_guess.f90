@@ -9,30 +9,23 @@
       use routines
       implicit none
       type(t_appvars), intent(inout) :: av
-      type(t_grid), intent(inout) :: g(:)
+      type(t_grid), intent(inout) :: g
       type(t_bconds), intent(in) :: bcs
       integer, intent(in) :: guesstype
-      integer :: i, j, ni, nj, j_mid, n
+      integer :: i, j, ni, nj, j_mid
       
 !     Variables required for the crude guess
       real :: t_out, v_out, ro_out, lx, ly, l
-      real :: l_i
-      real :: mass_flow_out, temp
-      real :: mach_lim, t_lim
-      real :: v_guess, ro_guess
-      
-      do n=1,av%nn
 
 !     Variables required for the improved guess, you will need to add to these
-!      real, allocatable :: l_i(g(n)%ni)
-!     INSERT
-!      real :: mass_flow_out(g(n)%ni), temp(g(n)%ni)
-!      real :: mach_lim, t_lim
-!      real :: v_guess(g(n)%ni), ro_guess(g(n)%ni)
+      real :: l_i(g%ni)
+      real :: mass_flow_out(g%ni), temp(g%ni)
+      real :: mach_lim, t_lim
+      real :: v_guess(g%ni), ro_guess(g%ni)
 
       
 !     Get the size of the mesh and store locally for convenience
-      ni = g(n)%ni; nj = g(n)%nj;
+      ni = g%ni; nj = g%nj;
 
 !     Assuming isentropic flow to the the exit plane calculate the static
 !     temperature and the exit velocity
@@ -44,7 +37,7 @@
       if(guesstype == 1) then
 
 !         Store the exit density and internal energy as if they were uniform 
-          g(n)%ro = ro_out 
+          g%ro = ro_out 
 !          g%roe  = g%ro * (av%cv * t_out + 0.5 * v_out**2)
 
 
@@ -52,20 +45,20 @@
 !         to determine the assumed direction of the flow
           j_mid = nj / 2
           do i = 1,ni-1
-              lx = g(n)%lx_j(i,j_mid); ly = g(n)%ly_j(i,j_mid); 
+              lx = g%lx_j(i,j_mid); ly = g%ly_j(i,j_mid); 
               l = hypot(lx,ly)
-              g(n)%rovx(i,:) = g(n)%ro(i,:) * v_out * ly / l
-              g(n)%rovy(i,:) = -g(n)%ro(i,:) * v_out * lx / l
+              g%rovx(i,:) = g%ro(i,:) * v_out * ly / l
+              g%rovy(i,:) = -g%ro(i,:) * v_out * lx / l
           end do
 
 !         Copy the values to the "i = ni" nodes as an approximation
-          g(n)%rovx(ni,:) = g(n)%rovx(ni-1,:)
-          g(n)%rovy(ni,:) = g(n)%rovy(ni-1,:)
+          g%rovx(ni,:) = g%rovx(ni-1,:)
+          g%rovy(ni,:) = g%rovy(ni-1,:)
 
 
 !         Print the guess that has been calculated
           write(6,*) 'Crude flow guess calculated'
-          write(6,*) '  At first point ro =', g(n)%ro(1,1), 'rovx =', g(n)%rovx(1,1), 'rovy =', g(n)%rovy(1,1)
+          write(6,*) '  At first point ro =', g%ro(1,1), 'rovx =', g%rovx(1,1), 'rovy =', g%rovy(1,1)
           write(6,*)
 
       else if(guesstype == 2) then 
@@ -76,7 +69,7 @@
 !         and y projected lengths with "hypot" and then sum them up in the
 !         second dimension with "sum". 
 !         INSERT
-          l_i = sum(hypot(g(n)%lx_i, g(n)%ly_i), 2)
+          l_i = sum(hypot(g%lx_i, g%ly_i), 2)
 
 !         Use the exit temperature, density and velocity calculated for the 
 !         crude guess with "l_i" to estimate the mass flow rate at the exit
@@ -112,11 +105,11 @@
 !         INSERT 
           do j = 1, nj
              do i = 1,ni-1
-                 lx = g(n)%lx_j(i,j); ly = g(n)%ly_j(i,j); 
+                 lx = g%lx_j(i,j); ly = g%ly_j(i,j); 
                  l = hypot(lx,ly)
-                 g(n)%ro(i,j)   = ro_guess(i) 
-                 g(n)%rovx(i,j) = g(n)%ro(i,j) * v_guess(i) * ly / l
-                 g(n)%rovy(i,j) = -g(n)%ro(i,j) * v_guess(i) * lx / l
+                 g%ro(i,j)   = ro_guess(i) 
+                 g%rovx(i,j) = g%ro(i,j) * v_guess(i) * ly / l
+                 g%rovy(i,j) = -g%ro(i,j) * v_guess(i) * lx / l
  !                g%roe(i,j)  = g%ro(i,j) * (av%cv * temp(i) + 0.5 * v_guess(i)**2 )
              end do
           end do 
@@ -124,26 +117,25 @@
 !         Make sure the guess has been copied for the "i = ni" values too
 !         INSERT
 !         Copy the penultimate entries to the final entry
-          g(n)%ro(ni,:) = g(n)%ro(ni-1,:)
-          g(n)%rovx(ni,:) = g(n)%rovx(ni-1,:)
-          g(n)%rovy(ni,:) = g(n)%rovy(ni-1,:)
+          g%ro(ni,:) = g%ro(ni-1,:)
+          g%rovx(ni,:) = g%rovx(ni-1,:)
+          g%rovy(ni,:) = g%rovy(ni-1,:)
 !          g%roe(ni,:) = g%roe(ni-1,:)
           
 
 !         Print the first elements of the guess like for the crude guess
 !         INSERT
           write(6,*) 'Printing the first elements of the improved guesses'
-          write(6,*) 'ro =', g(n)%ro(1,1), 'rovx =', g(n)%rovx(1,1), 'rovy =', g(n)%rovy(1,1)
+          write(6,*) 'ro =', g%ro(1,1), 'rovx =', g%rovx(1,1), 'rovy =', g%rovy(1,1)
 
       end if
 
 !     The initial guess values derived from the boundary conditions are also
 !     useful as a reference to non-dimensionalise the convergence
-      av%ro_ref = sum(g(n)%ro(1,:)) / nj
+      av%ro_ref = sum(g%ro(1,:)) / nj
 !      av%roe_ref = sum(g%roe(1,:)) / nj
-      av%rov_ref = max(sum(g(n)%rovx(1,:)),sum(g(n)%rovy(1,:))) / nj
+      av%rov_ref = max(sum(g%rovx(1,:)),sum(g%rovy(1,:))) / nj
       
-      end do
 
       end subroutine flow_guess
 

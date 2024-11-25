@@ -22,7 +22,7 @@
       real, intent(inout) :: prop(:,:)
       real, intent(out) :: dcell(:,:)
       real, dimension(size(prop,1),size(prop,2)) :: dnode
-      integer :: ni, nj, n
+      integer :: ni, nj
       
 !     Get the block size and store locally for convenience
       ni = size(prop,1); nj = size(prop,2)

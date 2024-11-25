@@ -29,7 +29,7 @@
 !     the values to be slightly less than "rostag". This can prevent the solver 
 !     crashing during severe transients.
       if(av%nstep == 1) then
-          bcs%ro = g(n)%ro(1,:)
+          bcs%ro = g%ro(1,:)
       else
           bcs%ro = bcs%rfin * g%ro(1,:) + (1 - bcs%rfin) * bcs%ro
       endif
@@ -57,8 +57,6 @@
 !     specified value of static pressure "p_out" in "bcs"
 !     INSERT
       g%p(av%ni,:) = bcs%p_out
-      
-      end do
 
       end subroutine apply_bconds
 

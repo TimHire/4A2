@@ -1,5 +1,5 @@
       
-      subroutine calc_areas(g, av)
+      subroutine calc_areas(g)
 
 !     Calculate the area of the quadrilateral cells and the lengths of the side
 !     facets
@@ -8,19 +8,17 @@
       use types
       use routines
       implicit none
-      type(t_grid), intent(inout) :: g(:)
-      type(t_appvars), intent(inout) :: av
-      integer :: ni, nj, n
+      type(t_grid), intent(inout) :: g
+      integer :: ni, nj
       
 
 !     Declare integers or any extra variables you need here
 !     INSERT
       integer :: i, j
-      
-      do n=1, av%nn
+
 
 !     Get the size of the mesh and store locally for convenience
-      ni = g(n)%ni; nj = g(n)%nj;
+      ni = g%ni; nj = g%nj;
 
 !     Calculate the areas of the cells and store in g%area. The area of any
 !     quadrilateral is half of the magnitude of the cross product of the two
@@ -29,10 +27,10 @@
 !     the i and j-directions or in a vectorised way by indexing the coordinate
 !     arrays with lists of indices
 !     INSERT
-      g(n)%area(1:ni-1, 1: nj-1) = 0.5 * ( ((g(n)%x(2:ni, 2:nj) - g(n)%x(1:ni-1, 1:nj-1)) * &
-                                         (g(n)%y(1:ni-1, 2:nj) - g(n)%y(2:ni, 1:nj-1))) - &
-                                        ((g(n)%y(2:ni, 2:nj) - g(n)%y(1:ni-1,1:nj-1)) * &
-                                         (g(n)%x(1:ni-1, 2:nj) - g(n)%x(2:ni, 1:nj-1))) )
+      g%area(1:ni-1, 1: nj-1) = 0.5 * ( ((g%x(2:ni, 2:nj) - g%x(1:ni-1, 1:nj-1)) * &
+                                         (g%y(1:ni-1, 2:nj) - g%y(2:ni, 1:nj-1))) - &
+                                        ((g%y(2:ni, 2:nj) - g%y(1:ni-1,1:nj-1)) * &
+                                         (g%x(1:ni-1, 2:nj) - g%x(2:ni, 1:nj-1))) )
                                       
 
 !     Calculate the projected lengths in the x and y-directions on all of the
@@ -43,14 +41,14 @@
 !     towards the centre of the i,j cell
 !     INSERT
 !     Not considering the side length of the outside most cells 
-      g(n)%lx_i = g(n)%y(:, 2:nj) - g(n)%y(:, 1:nj-1)
-      g(n)%ly_i = g(n)%x(:, 1:nj-1) - g(n)%x(:, 2:nj)
+      g%lx_i = g%y(:, 2:nj) - g%y(:, 1:nj-1)
+      g%ly_i = g%x(:, 1:nj-1) - g%x(:, 2:nj)
 
 !     Now repeat the calculation for the project lengths on the "j=const"
 !     facets. 
 !     INSERT
-      g(n)%lx_j = g(n)%y(1:ni-1, :) - g(n)%y(2:ni, :)
-      g(n)%ly_j = g(n)%x(2:ni, :) - g(n)%x(1:ni-1, :)
+      g%lx_j = g%y(1:ni-1, :) - g%y(2:ni, :)
+      g%ly_j = g%x(2:ni, :) - g%x(1:ni-1, :)
 
 !     Find the minimum length scale in the mesh, this is defined as the length
 !     of the shortest side of all the cells. Call this length "l_min", it is used
@@ -59,14 +57,12 @@
 !     underflow and overflow errors. Then find the overal minimum value using
 !     both the "min" and "minval" functions.
 !     INSERT
-      g(n)%l_min = min(minval(hypot(g(n)%lx_i, g(n)%ly_i)), minval(hypot(g(n)%lx_j, g(n)%ly_j)))
+      g%l_min = min(minval(hypot(g%lx_i, g%ly_i)), minval(hypot(g%lx_j, g%ly_j)))
 
 !
 !     Print the overall minimum length size that has been calculated
       write(6,*) 'Calculated cell areas and facet lengths'
-      write(6,*) '  Overall minimum element size = ', g(n)%l_min
+      write(6,*) '  Overall minimum element size = ', g%l_min
       write(6,*)
-      
-      end do
 
       end subroutine calc_areas

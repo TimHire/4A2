@@ -1,13 +1,16 @@
       
-      subroutine write_output(av,g,outtype)
+      subroutine write_output(av,g,bcs,n,outtype)
       
 !     Explicitly declare the required variables
       use types
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(in) :: g
-      integer, intent(in) :: outtype
+      type(t_grid), intent(inout) :: g
+      type(t_bconds), intent(in) :: bcs
+      integer, intent(in) :: outtype,n
       character(len=5) :: outname
+      
+      
 
 !     Check what data to write to file depending on the value contained within
 !     "outtype", options are to output grid coordinates only, grid + initial
@@ -25,8 +28,13 @@
 !     residual variables contained within the "g" variable. It is relatively
 !     straightforward to read into other programs as long as you know the
 !     structure.
+      if(n > 1) then
+      open(unit=7,file='out_' // outname // '_' // av%casename // '_' // char(n) // '.bin', &
+          form='unformatted',access='stream',status='replace')
+      elseif(n == 1) then
       open(unit=7,file='out_' // outname // '_' // av%casename // '.bin', &
           form='unformatted',access='stream',status='replace')
+      end if
 
 !     Write the size of the mesh
       write(7) [g%ni, g%nj]
@@ -44,6 +52,8 @@
 !     Write flow solution if it has been initialised with an initial guess or 
 !     has been completely solved
       if(outtype > 1) then
+!	  UNSURE IF THIS IS MAKING THE CP VALUES SMALLER AS USED TO PLOT AND NOT SURE WHY
+          g%roe = g%hstag - g%p/g%ro
 
 !         Write primary flow variables only
           write(7) g%ro; write(7) g%roe;           

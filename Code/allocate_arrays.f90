@@ -13,7 +13,8 @@
       type(t_bconds), intent(inout) :: bcs
       integer :: ni, nj
 
-!     Get the size of the mesh and store locally for convenience
+
+!     get the size of the mesh and store locally for convenience
       ni = av%ni; nj = av%nj;
 
 !     Copy the mesh size to the grid datatype

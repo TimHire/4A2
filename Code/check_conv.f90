@@ -9,23 +9,20 @@
       use routines
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(in) :: g(:)
+      type(t_grid), intent(in) :: g
       real, intent(out) :: d_avg, d_max
       real, dimension(g%ni-1,g%nj-1) :: dro, droe, drovx, drovy
       integer :: ijx_max(2), ijy_max(2), ij_max(2), ncells
       real :: dro_max, drovx_max, drovy_max, droe_max, dro_avg, drovx_avg, &
           drovy_avg, droe_avg, flow_ratio
       character(len=100) :: fmt_step
-      integer :: n 
-      
-      do n=1,av%nn
 
 !     Get the number of cells from the size of the residual arrays
-      ncells = size(g(n)%dro)
+      ncells = size(g%dro)
 
 !     Use "abs" to make all residual values positive and store locally
-      dro = abs(g(n)%dro); droe = abs(g(n)%droe);
-      drovx = abs(g(n)%drovx); drovy = abs(g(n)%drovy);
+      dro = abs(g%dro); droe = abs(g%droe);
+      drovx = abs(g%drovx); drovy = abs(g%drovy);
 
 !     Calculate the mean changes for each variable
       dro_avg = sum(abs(dro)) / (ncells * av%ro_ref)
@@ -58,7 +55,6 @@
           ij_max(2), ', d_avg =', d_avg
 
 
-      end do
       end subroutine check_conv
 
 
