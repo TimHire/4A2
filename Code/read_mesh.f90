@@ -9,6 +9,7 @@
       implicit none
       type(t_appvars), intent(inout) :: av
       type(t_grid), allocatable, intent(out) :: g(:)
+   !   type(t_grid), intent(inout) :: g(av%nn)
       type(t_bconds), intent(inout) :: bcs
       type(t_match), allocatable, intent(out) :: p(:)
       integer :: n, ni, nj, m

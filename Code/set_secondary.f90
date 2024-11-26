@@ -29,7 +29,7 @@
       g%hstag = av%cp * bcs%tstag        ! constant stagnation enthalpy improvement
       g%p = (g%ro * av%rgas / av%cv) * (g%hstag - 0.5 * hypot(g%vx, g%vy)**2) &
       / (1 + (av%rgas / av%cv))
-     
+
 
       end subroutine set_secondary
 

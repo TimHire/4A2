@@ -14,6 +14,7 @@
       integer :: ni, nj
 
 
+
 !     get the size of the mesh and store locally for convenience
       ni = av%ni; nj = av%nj;
 

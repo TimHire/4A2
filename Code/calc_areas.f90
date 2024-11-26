@@ -1,5 +1,5 @@
       
-      subroutine calc_areas(g)
+      subroutine calc_areas(g,av)
 
 !     Calculate the area of the quadrilateral cells and the lengths of the side
 !     facets
@@ -9,16 +9,18 @@
       use routines
       implicit none
       type(t_grid), intent(inout) :: g
-      integer :: ni, nj
+      type(t_appvars), intent(in) :: av
+      integer :: ni, nj, n
       
 
 !     Declare integers or any extra variables you need here
 !     INSERT
       integer :: i, j
 
-
 !     Get the size of the mesh and store locally for convenience
       ni = g%ni; nj = g%nj;
+      
+      write(6,*) ni, nj
 
 !     Calculate the areas of the cells and store in g%area. The area of any
 !     quadrilateral is half of the magnitude of the cross product of the two
@@ -64,5 +66,6 @@
       write(6,*) 'Calculated cell areas and facet lengths'
       write(6,*) '  Overall minimum element size = ', g%l_min
       write(6,*)
+
 
       end subroutine calc_areas

@@ -20,7 +20,8 @@
       type(t_bconds) :: bcs
       type(t_match) :: p
       type(t_geometry) :: geom
-      type(t_grid),allocatable :: g(:)
+      type(t_grid) :: g
+!	GETTING AN ERROR IF G IS NOT DEFINED AS A RAY BUT THIS SHOULD NOT BE RIGHT!!!!!!!!!!!!!!!!
       real :: d_max = 1, d_avg = 1
       integer :: nstep, nconv = 5, ncheck = 5
       integer :: nrkut, nrkuts = 4
@@ -34,37 +35,36 @@
 !     Determine whether to generate the mesh within this Fortran program or read
 !     it directly from a binary file written in Python
       if(av%ni /= -1) then
-          av%nn = 1
-          allocate(g(1))
 
 !         Now the size of the grid is known, the space in memory can be 
 !         allocated within the grid type
-          call allocate_arrays(av,g(1),bcs)
+          call allocate_arrays(av,g,bcs)
 
 !         Read in the case geometry
           call read_geom(av,geom)
 
 !         Set up the mesh coordinates, interpolated between the geometry curves
-          call generate_mesh(geom,g(1))
+          call generate_mesh(geom,g)
 
       else 
-
+	!  allocate(g(av%nn))
 !         Read the mesh coordinates directly from file - used for extension
+
           call read_mesh(av,g,bcs,p)
 
       end if
       
       
-      do n=1,av%nn
+   !   do n=1,av%nn
 
 !     Calculate cell areas and facet lengths
-      call calc_areas(g(n))
+      call calc_areas(g)
 
 !     Optional output call to inspect the mesh you have generated
-      call write_output(av,g(n),bcs,n,1)
+      call write_output(av,g,bcs,n,1)
 
 !     Check that the areas and projected lengths are correct
-      call check_mesh(g(n))
+      call check_mesh(g)
 
 !     Calculate the initial guess of the flowfield in the domain. There are two
 !     options that can be chosen with the input argument "guesstype":
@@ -75,14 +75,14 @@
 !            flow in the i-direction allows a calculation of a better
 !            approximation to the converged flowfield and so the time to
 !            solution will be reduced. You will need to complete this option.
-      call flow_guess(av,g(n),bcs,2)
+      call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
-      call write_output(av,g(n),bcs,n,2)
+      call write_output(av,g,bcs,n,2)
       
-      call set_timestep(av,g(n),bcs)
+      call set_timestep(av,g,bcs)
       
-      end do
+   !  end do
 
 
 !     Open file to store the convergence history. This is human readable during
@@ -100,7 +100,7 @@
 !     efficiently as you can.
       
       do nstep = 1, av%nsteps
-      do n=1,av%nn
+   !   do n=1,av%nn
 !     Iterate through all the meshes and run an iteration one at a time before passing the information between
 
           
@@ -108,10 +108,10 @@
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
           
-          g(n)%ro_start = g(n)%ro
-      !    g%roe_start = g%roe
-          g(n)%rovx_start = g(n)%rovx
-          g(n)%rovy_start = g(n)%rovy
+          g%ro_start = g%ro
+       !   g%roe_start = g%roe
+          g%rovx_start = g%rovx
+          g%rovy_start = g%rovy
           
           do nrkut = 1, nrkuts                  
           	  av%dt = av%dt_total / (1 + nrkuts - nrkut)
@@ -119,13 +119,13 @@
 !          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
-		  call set_secondary(av,g(n),bcs)
+		  call set_secondary(av,g,bcs)
 
 	!         Apply inlet and outlet values at the boundaries of the domain
-		  call apply_bconds(av,g(n),bcs)
+		  call apply_bconds(av,g,bcs)
 
 	!         Perform the timestep to update the primary flow variables
-		  call euler_iteration(av,g(n))
+		  call euler_iteration(av,g)
 		  
         !         Smooth between the meshes
         		  
@@ -133,13 +133,13 @@
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
           if(mod(av%nstep,nconv) == 0) then
-              call check_conv(av,g(n),d_avg,d_max)
+              call check_conv(av,g,d_avg,d_max)
           end if
 
 !         Check the solution hasn't diverged or a stop has been requested 
 !         every "ncheck" steps
           if(mod(av%nstep,ncheck) == 0) then
-              call check_stop(av,g(n))
+              call check_stop(av,g)
           end if
 
 !         Stop marching if converged to the desired tolerance "conlim"
@@ -149,16 +149,16 @@
           end if
 
       end do
-      end do
+     ! end do
       
       
-      do n=1,av%nn
+   !   do n=1,av%nn
 
 !     Calculation finished, call "write_output" to write the final, not 
 !     necessarily converged flowfield
       write(6,*) 'Calculation completed after', av%nstep,'iterations'
-      call write_output(av,g(n),bcs,n,3)
-      end do
+      call write_output(av,g,bcs,n,3)
+    !  end do
 !
 !     Close open convergence history file
       close(3)
