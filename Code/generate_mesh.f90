@@ -1,5 +1,5 @@
       
-      subroutine generate_mesh(geom,g)
+      subroutine generate_mesh(geom,g,geometric_mesh)
 
 !     Create cells of the mesh to cover the domain defined by geometry curves,
 !     the values of the node coordinates, x(i,j) and y(i,j) are stored in "g"
@@ -10,6 +10,7 @@
       implicit none
       type(t_geometry), intent(in) :: geom
       type(t_grid), intent(inout) :: g
+      logical, intent(in) :: geometric_mesh
       real :: si_a(geom%ni_a), si_b(geom%ni_b), si(g%ni), sj(g%nj)
       real :: si1(g%ni), si2(g%ni)
       integer :: ni, nj
@@ -26,8 +27,9 @@
 !     generate linearly spaced points in i-direction at desired mesh resolution
       call dist(geom%x_a,geom%y_a,1,si_a)
       call dist(geom%x_b,geom%y_b,1,si_b)
-!      call linspace(0.0,1.0,si)
+!      
       
+      if (geometric_mesh) then
 !     Splitting up the x direction into 2 sections and then appending the meshes together
       percent = 0.3
       ri = 0.07
@@ -40,6 +42,9 @@
       call geometric(percent+middle, 1.0, ni-x, 1.0+ri, si2)
       si(:x) = si1(:x)
       si(x+1:) = si2(:ni-x)
+      else
+      call linspace(0.0,1.0,si)
+      end if
 
 !     Interpolate the geometry curves to the required resolution in the 
 !     i-direction, this allows the mesh to be refined without altering the 
@@ -55,10 +60,13 @@
 !     intermediate coordinates from a weighted sum of the two boundaries
 !      call linspace(0.0,1.0,sj)
       
+      if (geometric_mesh) then
 !     Define the common ratio for the j direction geometric sequence
       rj = 1.06
       call geometric (0.0, 1.0, nj, rj, sj)
-      
+      else
+      call linspace(0.0,1.0,sj)
+      end if 
          
       do i=1, ni
 !         Only considering the interior points as the outside points are defined by the input geometry

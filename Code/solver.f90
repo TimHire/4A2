@@ -24,6 +24,8 @@
       real :: d_max = 1, d_avg = 1
       integer :: nstep, nconv = 5, ncheck = 5
       integer :: nrkut, nrkuts = 4
+      logical :: geometric_mesh = .true.
+      logical :: constant_enthalpy = .true.
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
@@ -40,7 +42,7 @@
           call read_geom(av,geom)
 
 !         Set up the mesh coordinates, interpolated between the geometry curves
-          call generate_mesh(geom,g)
+          call generate_mesh(geom,g,geometric_mesh)
 
       else 
 
@@ -95,7 +97,9 @@
           av%nstep = nstep
           
           g%ro_start = g%ro
+          if (.not. constant_enthalpy) then
           g%roe_start = g%roe
+          end if
           g%rovx_start = g%rovx
           g%rovy_start = g%rovy
           
@@ -105,13 +109,13 @@
 !          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
-		  call set_secondary(av,g)
+		  call set_secondary(av,g,bcs,constant_enthalpy)
 
 	!         Apply inlet and outlet values at the boundaries of the domain
-		  call apply_bconds(av,g,bcs)
+		  call apply_bconds(av,g,bcs,constant_enthalpy)
 
 	!         Perform the timestep to update the primary flow variables
-		  call euler_iteration(av,g)
+		  call euler_iteration(av,g,constant_enthalpy)
  	  end do
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
