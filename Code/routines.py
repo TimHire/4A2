@@ -24,12 +24,12 @@ def calc_secondary(av,b):
     b['vx'] = b['rovx'] / b['ro']
     b['vy'] = b['rovy'] / b['ro']
     b['v'] = np.sqrt(b['vx']**2 + b['vy']**2) 
-    b['t'] = (b['roe'] - b['ro'] * 0.5 * b['v']**2) / (av['cv'] * b['ro'])
+    b['t'] = ( b['roe'] / b['ro'] - 0.5 * b['v']**2 ) / av['cv']
+    b['p'] = ( b['roe'] - 0.5 * b['ro'] * b['v']**2 ) * (av['gam'] - 1)
+    #b['p'] = b['ro'] * av['rgas'] * b['t']
+    b['hstag'] = (b['roe'] + b['p']) / b['ro']   
     #b['tstag'] = b['hstag'] / av['cp']
     b['tstag'] = b['t'] + 0.5 * b['v']**2 / av['cp']
-    b['p'] = b['ro'] * av['rgas'] * b['t']
-    b['hstag'] = (b['roe'] + b['p']) / b['ro']   
-    #b['t'] = (b['tstag'] - 0.5 * b['v']**2 / av['cp'])
     b['pstag'] = b['p'] + 0.5 * b['ro'] * b['v']**2
     b['mach'] = b['v'] / np.sqrt(av['gam'] * av['rgas'] * b['t'])
     b['alpha'] = np.arctan(b['vy'], b['vx']) / np.pi * 180

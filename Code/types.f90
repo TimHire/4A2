@@ -86,7 +86,7 @@
           real, dimension(:,:), allocatable :: dro, droe, drovx, drovy
 
 !         Secondary variables at nodes
-          real, dimension(:,:), allocatable :: p, hstag, vx, vy 
+          real, dimension(:,:), allocatable :: p, hstag, vx, vy
 
 !         Logical array to store wall locations for the nodes
           logical, dimension(:,:), allocatable :: wall

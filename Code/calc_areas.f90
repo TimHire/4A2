@@ -10,7 +10,7 @@
       implicit none
       type(t_grid), intent(inout) :: g
       type(t_appvars), intent(in) :: av
-      integer :: ni, nj, n
+      integer :: ni, nj
       
 
 !     Declare integers or any extra variables you need here

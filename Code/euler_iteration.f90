@@ -1,5 +1,5 @@
 
-      subroutine euler_iteration(av,g)
+      subroutine euler_iteration(av,g,constant_enthalpy)
 
 !     This subroutine calculates the fluxes into each cell and then sums them to
 !     update the primary flow properties
@@ -11,6 +11,7 @@
       implicit none
       type(t_appvars), intent(in) :: av
       type(t_grid), intent(inout) :: g
+      logical, intent(in) :: constant_enthalpy
       real, dimension(g%ni,g%nj-1) :: mass_i, flux_i
       real, dimension(g%ni-1,g%nj) :: mass_j, flux_j
       integer :: i, j, ni, nj
@@ -40,19 +41,19 @@
       call sum_fluxes(av,mass_i,mass_j,g%area,g%ro_start,g%dro)
 
 
-
+      if (.not. constant_enthalpy) then
 !     Setup the conservation of energy equation by calculated the enthalpy flux
 !     and storing the values in "flux_i" and "flux_j", you will need "mass_i"
 !     and "mass_j" from before
 !     INSERT
 !     Constant stagnation enthalpy improvement for efficiency so discarding this section
-!      flux_i = mass_i * (g%hstag(:,1:nj-1) + g%hstag(:,2:nj)) / 2
-!      flux_j = mass_j * (g%hstag(1:ni-1,:) + g%hstag(2:ni,:)) / 2
+      flux_i = mass_i * (g%hstag(:,1:nj-1) + g%hstag(:,2:nj)) / 2
+      flux_j = mass_j * (g%hstag(1:ni-1,:) + g%hstag(2:ni,:)) / 2
 
 !     Update the internal energy with enthalpy fluxes
 !     INSERT
-!      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe_start,g%droe)
-
+      call sum_fluxes(av,flux_i,flux_j,g%area,g%roe_start,g%droe)
+      end if
 
 
 !     After discussing with Felix decided needed to do pressure times lenth for each section before averaging
@@ -82,13 +83,17 @@
      
 !     Reset the variables to be used again in the solver loop
       g%ro = g%ro_start
-!      g%roe = g%roe_start
+      if (.not. constant_enthalpy) then
+           g%roe = g%roe_start
+      end if
       g%rovx = g%rovx_start
       g%rovy = g%rovy_start
 
 !     Add artificial viscosity by smoothing all of the primary flow variables
       call smooth_array(av,g%ro)
-  !    call smooth_array(av,g%roe)
+      if (.not. constant_enthalpy) then
+           call smooth_array(av,g%roe)
+      end if
       call smooth_array(av,g%rovx)
       call smooth_array(av,g%rovy)
       

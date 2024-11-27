@@ -110,7 +110,7 @@
                  g%ro(i,j)   = ro_guess(i) 
                  g%rovx(i,j) = g%ro(i,j) * v_guess(i) * ly / l
                  g%rovy(i,j) = -g%ro(i,j) * v_guess(i) * lx / l
- !                g%roe(i,j)  = g%ro(i,j) * (av%cv * temp(i) + 0.5 * v_guess(i)**2 )
+                 g%roe(i,j)  = g%ro(i,j) * (av%cv * temp(i) + 0.5 * v_guess(i)**2 )
              end do
           end do 
               
@@ -120,7 +120,7 @@
           g%ro(ni,:) = g%ro(ni-1,:)
           g%rovx(ni,:) = g%rovx(ni-1,:)
           g%rovy(ni,:) = g%rovy(ni-1,:)
-!          g%roe(ni,:) = g%roe(ni-1,:)
+          g%roe(ni,:) = g%roe(ni-1,:)
           
 
 !         Print the first elements of the guess like for the crude guess
@@ -133,7 +133,7 @@
 !     The initial guess values derived from the boundary conditions are also
 !     useful as a reference to non-dimensionalise the convergence
       av%ro_ref = sum(g%ro(1,:)) / nj
-!      av%roe_ref = sum(g%roe(1,:)) / nj
+      av%roe_ref = sum(g%roe(1,:)) / nj
       av%rov_ref = max(sum(g%rovx(1,:)),sum(g%rovy(1,:))) / nj
       
 

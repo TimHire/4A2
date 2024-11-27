@@ -24,17 +24,22 @@
 !	GETTING AN ERROR IF G IS NOT DEFINED AS A RAY BUT THIS SHOULD NOT BE RIGHT!!!!!!!!!!!!!!!!
       real :: d_max = 1, d_avg = 1
       integer :: nstep, nconv = 5, ncheck = 5
-      integer :: nrkut, nrkuts = 4
+      integer :: nrkut, nrkuts = 4             ! set nkruts = 1 to turn of the Runge/Kutta improvement
       integer :: n
+      logical :: geometric_mesh = .true.       ! to turn on/off geometric mesh improvement
+      logical :: constant_enthalpy = .true.    ! to turn on/off the constant enthalpy improvement
+
+
+!   THIS IS THE LAST CHANGE SO KNOW HAS BEEN SAVED
+
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
       
-      
-
 !     Determine whether to generate the mesh within this Fortran program or read
 !     it directly from a binary file written in Python
       if(av%ni /= -1) then
+      !    av%nn = 1
 
 !         Now the size of the grid is known, the space in memory can be 
 !         allocated within the grid type
@@ -44,24 +49,29 @@
           call read_geom(av,geom)
 
 !         Set up the mesh coordinates, interpolated between the geometry curves
-          call generate_mesh(geom,g)
+          call generate_mesh(geom,g,geometric_mesh)
 
       else 
-	!  allocate(g(av%nn))
+	 
 !         Read the mesh coordinates directly from file - used for extension
 
           call read_mesh(av,g,bcs,p)
 
       end if
       
+      !open(unit=15,file='g.txt')
+      !write(15) g(1)
       
-   !   do n=1,av%nn
+     ! close(15)
+          
+    !  do n=1,av%nn
+      
 
 !     Calculate cell areas and facet lengths
       call calc_areas(g)
 
 !     Optional output call to inspect the mesh you have generated
-      call write_output(av,g,bcs,n,1)
+      call write_output(av,g,n,1)
 
 !     Check that the areas and projected lengths are correct
       call check_mesh(g)
@@ -78,11 +88,11 @@
       call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
-      call write_output(av,g,bcs,n,2)
+      call write_output(av,g,n,2)
       
       call set_timestep(av,g,bcs)
       
-   !  end do
+    !end do
 
 
 !     Open file to store the convergence history. This is human readable during
@@ -98,18 +108,21 @@
 !     Start the time stepping do loop for "nsteps". This is now the heart of the
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
-      
+       
       do nstep = 1, av%nsteps
-   !   do n=1,av%nn
+    !  do n=1,av%nn
 !     Iterate through all the meshes and run an iteration one at a time before passing the information between
 
-          
+!         Smooth between the meshes
+
+
 
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
-          
+
+          ! For the Runge-Kutta improvement
           g%ro_start = g%ro
-       !   g%roe_start = g%roe
+          g%roe_start = g%roe
           g%rovx_start = g%rovx
           g%rovy_start = g%rovy
           
@@ -119,15 +132,15 @@
 !          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
-		  call set_secondary(av,g,bcs)
+		  call set_secondary(av,g,bcs,constant_enthalpy)
 
 	!         Apply inlet and outlet values at the boundaries of the domain
-		  call apply_bconds(av,g,bcs)
+		  call apply_bconds(av,g,bcs,constant_enthalpy)
 
 	!         Perform the timestep to update the primary flow variables
-		  call euler_iteration(av,g)
+		  call euler_iteration(av,g,constant_enthalpy)
 		  
-        !         Smooth between the meshes
+        
         		  
  	  end do
 
@@ -148,17 +161,17 @@
               exit
           end if
 
-      end do
      ! end do
+      end do
       
       
-   !   do n=1,av%nn
+    !  do n=1,av%nn
 
 !     Calculation finished, call "write_output" to write the final, not 
 !     necessarily converged flowfield
       write(6,*) 'Calculation completed after', av%nstep,'iterations'
-      call write_output(av,g,bcs,n,3)
-    !  end do
+      call write_output(av,g,n,3)
+     ! end do
 !
 !     Close open convergence history file
       close(3)

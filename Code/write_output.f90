@@ -1,14 +1,14 @@
       
-      subroutine write_output(av,g,bcs,n,outtype)
+      subroutine write_output(av,g,n,outtype)
       
 !     Explicitly declare the required variables
       use types
       implicit none
       type(t_appvars), intent(in) :: av
       type(t_grid), intent(inout) :: g
-      type(t_bconds), intent(in) :: bcs
       integer, intent(in) :: outtype,n
       character(len=5) :: outname
+      
       
       
 
@@ -52,8 +52,6 @@
 !     Write flow solution if it has been initialised with an initial guess or 
 !     has been completely solved
       if(outtype > 1) then
-!	  UNSURE IF THIS IS MAKING THE CP VALUES SMALLER AS USED TO PLOT AND NOT SURE WHY
-          g%roe = g%hstag - g%p/g%ro
 
 !         Write primary flow variables only
           write(7) g%ro; write(7) g%roe;           
