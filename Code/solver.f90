@@ -22,10 +22,11 @@
       type(t_geometry) :: geom
       type(t_grid) :: g
       real :: d_max = 1, d_avg = 1
+      integer :: n
       integer :: nstep, nconv = 5, ncheck = 5
-      integer :: nrkut, nrkuts = 4
-      logical :: geometric_mesh = .true.
-      logical :: constant_enthalpy = .true.
+      integer :: nrkut, nrkuts = 1
+      logical :: geometric_mesh = .false.
+      logical :: constant_enthalpy = .false.
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
@@ -33,7 +34,7 @@
 !     Determine whether to generate the mesh within this Fortran program or read
 !     it directly from a binary file written in Python
       if(av%ni /= -1) then
-
+          av%nn = 1; bcs%n_in = 1; bcs%n_out = 1;
 !         Now the size of the grid is known, the space in memory can be 
 !         allocated within the grid type
           call allocate_arrays(av,g,bcs)
@@ -50,15 +51,16 @@
           call read_mesh(av,g,bcs,p)
 
       end if
+      
 
 !     Calculate cell areas and facet lengths
-      call calc_areas(g)
+      call calc_areas(g,av)
 
 !     Optional output call to inspect the mesh you have generated
-      call write_output(av,g,1)
+     ! call write_output(av,g(n),1)
 
 !     Check that the areas and projected lengths are correct
-      call check_mesh(g)
+      call check_mesh(g,av)
 
 !     Calculate the initial guess of the flowfield in the domain. There are two
 !     options that can be chosen with the input argument "guesstype":
@@ -72,11 +74,16 @@
       call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
-      call write_output(av,g,2)
+    !  call write_output(av,g(n),2)
 
 !     Set the length of the timestep, initially this is a constant based on a 
 !     conservative guess of the mach number
       call set_timestep(av,g,bcs)
+      
+      
+      
+ ! EITHER NEED TO PUT SET_TIMESTEP IN THE MAIN LOOP OR NEED TO MAKE THE MAIN LOOP ITERATE AS A WHOLE AGAIN
+      
 
 !     Open file to store the convergence history. This is human readable during
 !     a long run by using "tail -f conv_example.csv" in a terminal window
@@ -86,22 +93,27 @@
 !     is written by setting the value to 1, or to terminate the calculation if
 !     set to 2
       open(unit=11,file='stopit')
-      write(11,*) 0; close(11);
+      write(11,*) 0; close(11); 
 
 !     Start the time stepping do loop for "nsteps". This is now the heart of the
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
       do nstep = 1, av%nsteps
+   !   do n=1,av%nn
+      
+      !   Put mesh smoothing function in
+          call patch_smoothing(av,g,p)      
 
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
           
-          g%ro_start = g%ro
-          if (.not. constant_enthalpy) then
-          g%roe_start = g%roe
-          end if
-          g%rovx_start = g%rovx
-          g%rovy_start = g%rovy
+   !       g(n)%ro_start = g(n)%ro
+    !      if (.not. constant_enthalpy) then
+   !       g(n)%roe_start = g(n)%roe
+    !      end if
+   !       g(n)%rovx_start = g(n)%rovx
+     !     g(n)%rovy_start = g(n)%rovy
+          call prop_start(av,g,constant_enthalpy)
           
           do nrkut = 1, nrkuts
           	  av%dt = av%dt_total / (1 + nrkuts - nrkut)
@@ -136,11 +148,14 @@
           end if
 
       end do
+    !  end do
+
 
 !     Calculation finished, call "write_output" to write the final, not 
 !     necessarily converged flowfield
-      write(6,*) 'Calculation completed after', av%nstep,'iterations'
-      call write_output(av,g,3)
+  !    write(6,*) 'Calculation completed after', av%nstep,'iterations'
+   !   call write_output(av,g,3)
+
 !
 !     Close open convergence history file
       close(3)

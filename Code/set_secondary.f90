@@ -8,9 +8,11 @@
       use types
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(inout) :: g
+      type(t_grid), intent(inout) :: g(:)
       type(t_bconds), intent(in) :: bcs
       logical, intent(in) :: constant_enthalpy
+      integer :: n
+      do n=1,av%nn
 
 !     Define any further variables you may need
 !     INSERT
@@ -25,16 +27,18 @@
 !     loops as the operations can be performed elementwise, although you may
 !     wish to define some intermediate variables to improve readability.
 !     INSERT
-      g%vx = g%rovx / g%ro
-      g%vy = g%rovy / g%ro
+      g(n)%vx = g(n)%rovx / g(n)%ro
+      g(n)%vy = g(n)%rovy / g(n)%ro
       if (constant_enthalpy) then
-      g%p = g%ro * av%rgas * (bcs%tstag - 0.5 * hypot(g%vx, g%vy)**2 / av%cp)
-      g%hstag = av%cp * bcs%tstag
-      g%roe = g%hstag * g%ro - g%p
+      g(n)%p = g(n)%ro * av%rgas * (bcs%tstag - 0.5 * hypot(g(n)%vx, g(n)%vy)**2 / av%cp)
+      g(n)%hstag = av%cp * bcs%tstag
+      g(n)%roe = g(n)%hstag * g(n)%ro - g(n)%p
       else
-      g%p = (av%rgas/av%cv) * (g%roe - g%ro * 0.5 * hypot(g%vx, g%vy)**2)
-      g%hstag = (g%roe + g%p) / g%ro
+      g(n)%p = (av%rgas/av%cv) * (g(n)%roe - g(n)%ro * 0.5 * hypot(g(n)%vx, g(n)%vy)**2)
+      g(n)%hstag = (g(n)%roe + g(n)%p) / g(n)%ro
       end if
+      
+      end do
 
       end subroutine set_secondary
 

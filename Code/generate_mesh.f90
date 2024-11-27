@@ -9,10 +9,10 @@
       use routines
       implicit none
       type(t_geometry), intent(in) :: geom
-      type(t_grid), intent(inout) :: g
+      type(t_grid), intent(inout) :: g(:)
       logical, intent(in) :: geometric_mesh
-      real :: si_a(geom%ni_a), si_b(geom%ni_b), si(g%ni), sj(g%nj)
-      real :: si1(g%ni), si2(g%ni)
+      real :: si_a(geom%ni_a), si_b(geom%ni_b)
+      real, allocatable :: si(:), sj(:), si1(:), sj1(:), si2(:), sj2(:)
       integer :: ni, nj
 
 !     Declare integers or any extra variables you need here
@@ -21,7 +21,10 @@
       real :: ri, rj, percent, middle
 
 !     Get the size of the mesh and store locally for convenience
-      ni = g%ni; nj = g%nj;
+      ni = g(1)%ni; nj = g(1)%nj;
+      allocate(si(ni)); allocate(sj(nj));
+      allocate(si1(ni)); allocate(sj1(nj));
+      allocate(si2(ni)); allocate(sj2(nj));
 
 !     Calculate the non-dimensional curve lengths of the geometry input and
 !     generate linearly spaced points in i-direction at desired mesh resolution
@@ -49,10 +52,10 @@
 !     Interpolate the geometry curves to the required resolution in the 
 !     i-direction, this allows the mesh to be refined without altering the 
 !     geometry definition file, the data is stored at "j = 1" and "j = nj"
-      call interp(si_a,geom%x_a,si,g%x(:,1))
-      call interp(si_a,geom%y_a,si,g%y(:,1))
-      call interp(si_b,geom%x_b,si,g%x(:,nj))
-      call interp(si_b,geom%y_b,si,g%y(:,nj))
+      call interp(si_a,geom%x_a,si,g(1)%x(:,1))
+      call interp(si_a,geom%y_a,si,g(1)%y(:,1))
+      call interp(si_b,geom%x_b,si,g(1)%x(:,nj))
+      call interp(si_b,geom%y_b,si,g(1)%y(:,nj))
 
 !     Calculate the coordinates of all the intermediate points within the mesh.
 !     Create a new vector of non-dimensional spacings in the j-direction using 
@@ -71,8 +74,8 @@
       do i=1, ni
 !         Only considering the interior points as the outside points are defined by the input geometry
 !	  Use a weighted sum of the values at each of the walls along with the current linspace value for proportions
-      	  g%x(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%x(i,1) + sj(2:nj-1)*g%x(i,nj)
-      	  g%y(i,2:nj-1) = (1.0 - sj(2:nj-1))*g%y(i,1) + sj(2:nj-1)*g%y(i,nj)
+      	  g(1)%x(i,2:nj-1) = (1.0 - sj(2:nj-1))*g(1)%x(i,1) + sj(2:nj-1)*g(1)%x(i,nj)
+      	  g(1)%y(i,2:nj-1) = (1.0 - sj(2:nj-1))*g(1)%y(i,1) + sj(2:nj-1)*g(1)%y(i,nj)
       end do
 
 !     In all of the test cases for the basic solver the the "j = 1" and "j = nj"
@@ -80,8 +83,8 @@
 !     and communicate the position of the walls to the solver in a more 
 !     flexible way. The "wall" variable is an "ni * nj" logical array where 
 !     "true" indicates the node is on a wall.
-      g%wall = .false.
-      g%wall(:,[1,g%nj]) = .true.
+      g(1)%wall = .false.
+      g(1)%wall(:,[1,g(1)%nj]) = .true.
 
 !     Print that the mesh has been created
       write(6,*) 'Interpolated mesh from the bounding geometry curves'

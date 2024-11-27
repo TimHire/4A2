@@ -44,6 +44,8 @@
               g(n)%lx_j(ni-1,nj),g(n)%ly_j(ni-1,nj))
           allocate(g(n)%ro(ni,nj),g(n)%rovx(ni,nj),g(n)%rovy(ni,nj), &
               g(n)%roe(ni,nj))
+          allocate(g(n)%ro_start(ni,nj),g(n)%rovx_start(ni,nj),g(n)%rovy_start(ni,nj), &
+              g(n)%roe_start(ni,nj))
           allocate(g(n)%dro(ni-1,nj-1),g(n)%drovx(ni-1,nj-1), &
               g(n)%drovy(ni-1,nj-1),g(n)%droe(ni-1,nj-1))
           allocate(g(n)%p(ni,nj),g(n)%hstag(ni,nj),g(n)%vx(ni,nj), &
