@@ -14,13 +14,13 @@
       logical, intent(in) :: constant_enthalpy
       integer :: n_in, n_out
       
+      n_in = bcs%n_in; n_out = bcs%n_out;
 
 !     Declare the other variables you need here
 !     INSERT
-      real :: t(1:av%ni, 1:av%nj), v(1:av%ni, 1:av%nj)
+    !  real :: t(1:g(n_in)%ni, 1:g(n_in)%nj), v(1:g(n_in)%ni, 1:g(n_in)%nj)
       
-      n_in = bcs%n_in; n_out = bcs%n_out;
-
+      
 !     At the inlet boundary the change in density is driven towards "rostag",
 !     which is then used to obtain the other flow properties to match the
 !     specified stagnation pressure, temperature and flow angle. 
@@ -44,25 +44,26 @@
 !     "hstag(1,:)"
 !     INSERT
 !     Need to calculate the velocities for each cell at the inlet
-      t(1,:) = bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)
-      v(1,:) = sqrt(2 * av%cp * (bcs%tstag - t(1,:)))
+   !   t(1,:) = bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)
+   !   v(1,:) = sqrt(2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)))
 !     Cannot assign p to g%p(1,:) without there being an error --> need to establish if this is a problem
      
       g(n_in)%p(1,:) = bcs%pstag * (bcs%ro / bcs%rostag) ** (av%gam)
-      g(n_in)%vx(1,:) = v(1,:) * cos(bcs%alpha)
-      g(n_in)%vy(1,:) = v(1,:) * sin(bcs%alpha)
+      g(n_in)%vx(1,:) = sqrt(2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1))) * cos(bcs%alpha)
+      g(n_in)%vy(1,:) = sqrt(2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1))) * sin(bcs%alpha)
       g(n_in)%rovx_start(1,:) = g(n_in)%vx(1,:) * bcs%ro
       g(n_in)%rovy_start(1,:) = g(n_in)%vy(1,:) * bcs%ro
       
       if (.not. constant_enthalpy) then
-      g(n_in)%roe_start(1,:) = bcs%ro * (av%cv * t(1,:) + 0.5 * bcs%ro * v(1,:)**2)
+      g(n_in)%roe_start(1,:) = bcs%ro * (av%cv * bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1) &
+      + 0.5 * bcs%ro * 2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)))
       g(n_in)%hstag(1,:) = (g(n_in)%roe(1,:) + g(n_in)%p(1,:)) / bcs%ro 
       end if
 
 !     For the outlet boundary condition set the value of "p(ni,:)" to the
 !     specified value of static pressure "p_out" in "bcs"
 !     INSERT
-      g(n_out)%p(av%ni,:) = bcs%p_out
+      g(n_out)%p(g(n_out)%ni,:) = bcs%p_out
 
       end subroutine apply_bconds
 

@@ -57,7 +57,7 @@
       call calc_areas(g,av)
 
 !     Optional output call to inspect the mesh you have generated
-     ! call write_output(av,g(n),1)
+      call write_output(av,g,1)
 
 !     Check that the areas and projected lengths are correct
       call check_mesh(g,av)
@@ -74,7 +74,7 @@
       call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
-    !  call write_output(av,g(n),2)
+      call write_output(av,g,2)
 
 !     Set the length of the timestep, initially this is a constant based on a 
 !     conservative guess of the mach number
@@ -99,26 +99,19 @@
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
       do nstep = 1, av%nsteps
-   !   do n=1,av%nn
       
-      !   Put mesh smoothing function in
+          if (av%nn > 1) then
+      	  !   Put mesh smoothing function in
           call patch_smoothing(av,g,p)      
+          end if
 
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
           
-   !       g(n)%ro_start = g(n)%ro
-    !      if (.not. constant_enthalpy) then
-   !       g(n)%roe_start = g(n)%roe
-    !      end if
-   !       g(n)%rovx_start = g(n)%rovx
-     !     g(n)%rovy_start = g(n)%rovy
           call prop_start(av,g,constant_enthalpy)
           
           do nrkut = 1, nrkuts
           	  av%dt = av%dt_total / (1 + nrkuts - nrkut)
-          	  
-!          	  write(6,*) 'Current timestep of ', av%dt_total,'iterations'
 
 	!         Calculate secondary flow variables used in conservation equations
 		  call set_secondary(av,g,bcs,constant_enthalpy)
@@ -148,13 +141,12 @@
           end if
 
       end do
-    !  end do
 
 
 !     Calculation finished, call "write_output" to write the final, not 
 !     necessarily converged flowfield
-  !    write(6,*) 'Calculation completed after', av%nstep,'iterations'
-   !   call write_output(av,g,3)
+      write(6,*) 'Calculation completed after', av%nstep,'iterations'
+      call write_output(av,g,3)
 
 !
 !     Close open convergence history file

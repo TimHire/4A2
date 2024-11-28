@@ -11,7 +11,7 @@
       type(t_grid), intent(in) :: g(:)
       type(t_bconds), intent(in) :: bcs
       real :: astag, v_max
-      real :: n
+      integer :: n
       
       do n=1,av%nn
 
