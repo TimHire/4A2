@@ -21,14 +21,15 @@ def main():
     plt.figure(figsize=[9.6,7.2]); ax = plt.axes(); cols = gen_cols();
     ax.set_xlabel('x / m'); ax.set_ylabel('y / m');
     ax.set_aspect('equal',adjustable='box'); ax.tick_params(direction='in')
+    
+    for i in range(5):
+        # Plot the mesh coordinates to show the cells
+        ax.plot(g[i]['x'],g[i]['y'],color=cols[0,:],linewidth=0.5)
+        ax.plot(np.transpose(g[i]['x']),np.transpose(g[i]['y']),color=cols[0,:],
+            linewidth=0.5)
 
-    # Plot the mesh coordinates to show the cells
-    ax.plot(g['x'],g['y'],color=cols[0,:],linewidth=0.5)
-    ax.plot(np.transpose(g['x']),np.transpose(g['y']),color=cols[0,:],
-        linewidth=0.5)
-
-    # Draw the boundary of the block
-    plot_bound(ax,g)
+        # Draw the boundary of the block
+        #plot_bound(ax,g[i])
 
     # Show all the plots
     plt.show()

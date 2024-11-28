@@ -8,9 +8,10 @@
       type(t_grid), intent(in) :: g(:)
       integer, intent(in) :: outtype
       character(len=5) :: outname
-        integer :: n
-     
+      integer :: n
+      !character(len=10) :: nn
 
+   
 !     Check what data to write to file depending on the value contained within
 !     "outtype", options are to output grid coordinates only, grid + initial
 !     guess, or the complete works 
@@ -24,15 +25,18 @@
       
        
       
+  !    write(nn,"(I10)") n
 !     Open a new file to write the data into, it is an unformatted binary file
 !     that takes up minimal space but contains all of the grid, flow and
 !     residual variables contained within the "g" variable. It is relatively
 !     straightforward to read into other programs as long as you know the
 !     structure.
-      open(unit=7,file='out_' // outname // '_' // av%casename // '.bin', &
+      open(unit=7,file='out_' // outname // '_' // av%casename //'.bin', &
           form='unformatted',access='stream',status='replace')
 
 do n=1,av%nn
+      write(7) [n]
+
 !     Write the size of the mesh
       write(7) [g(n)%ni, g(n)%nj]
 
