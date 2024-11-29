@@ -100,11 +100,6 @@
 !     efficiently as you can.
       do nstep = 1, av%nsteps
       
-          if (av%nn > 1) then
-      	  !   Put mesh smoothing function in
-          call patch_smoothing(av,g,p)      
-          end if
-
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
           
@@ -112,6 +107,8 @@
           
           do nrkut = 1, nrkuts
           	  av%dt = av%dt_total / (1 + nrkuts - nrkut)
+          	  !av%dt = g(n)%dt_total / (1 + nrkuts - nrkut)
+          	  !call update_timestep(av,g,nrkuts,nrkut)
 
 	!         Calculate secondary flow variables used in conservation equations
 		  call set_secondary(av,g,bcs,constant_enthalpy)
@@ -122,6 +119,10 @@
 	!         Perform the timestep to update the primary flow variables
 		  call euler_iteration(av,g,constant_enthalpy)
  	  end do
+ 	  if (av%nn > 1) then
+      	  !   Put mesh smoothing function in
+          call patch_smoothing(av,g,p)
+          end if
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
           if(mod(av%nstep,nconv) == 0) then

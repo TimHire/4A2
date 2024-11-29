@@ -8,7 +8,7 @@
       use types
       implicit none
       type(t_appvars), intent(inout) :: av
-      type(t_grid), intent(in) :: g(:)
+      type(t_grid), intent(inout) :: g(:)
       type(t_bconds), intent(in) :: bcs
       real :: astag, v_max
       integer :: n
@@ -31,6 +31,7 @@
 !     Calculate the timestep using the CFL number and store it in "av%dt"
 !     INSERT
       av%dt_total = g(n)%l_min * av%cfl / v_max
+      !g(n)%dt_total = g(n)%l_min * av%cfl / v_max
 
 !     Print the calculated timestep and some intermediate values
 !     INSERT

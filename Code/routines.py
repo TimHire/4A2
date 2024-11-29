@@ -44,8 +44,11 @@ def cut_i(b,i):
     c = {}
     for var in b:
         if isinstance(b[var],np.ndarray):
-            if i < np.shape(b[var])[0]:
+            if b[var].size == 1:
+                c[var] = b[var]
+            elif i < np.shape(b[var])[0]:
                 c[var] = np.squeeze(b[var][i,:])
+
         else:
             c[var] = b[var]
 
@@ -601,15 +604,17 @@ def read_case(filename):
     elif 'final' in filename:
         outtype = 3
 
-    # Initialise the dictionary to store the data
-    g = {"ni":[], "nj":[], "x":[], "y":[], "area":[], "lx_i":[], "ly_i":[], "lx_j":[], "ly_j":[], "wall":[]}#, "ro":[], "roe":[], "rovx":[], "rovy":[], "dro":[], "droe":[], "drovx":[], "drovy":[]}
-    
-    print("Starting to read_case")
+    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5}
+    nblock = nblocks[filename[10:-4]]
 
-    for nn in range(5):
+    # Initialise the dictionary to store the data
+    g = {"ni":[], "nj":[], "x":[], "y":[], "area":[], "lx_i":[], "ly_i":[], "lx_j":[], "ly_j":[], "wall":[]}
+    
+    f = open(filename,'r')
         # Open the file to read
-        filename1 = filename[:-4] + str(nn + 1) + ".bin"
-        f = open(filename1,'r')
+        #filename1 = filename[:-4] + str(nn + 1) + ".bin"
+    for nn in range(nblock):
+        #block_num = np.fromfile(f,dtype=np.int32,count=1).item()
         # Read the size of the mesh
         g['ni'].append(np.fromfile(f,dtype=np.int32,count=1).item())
         g['nj'].append(np.fromfile(f,dtype=np.int32,count=1).item())
@@ -624,11 +629,13 @@ def read_case(filename):
         for n,name in enumerate(fieldnames):
 
             # Read the data elementwise and keep 1D temporarily
-            g[name].append(np.fromfile(f,dtype=np.float32,count=ni_mesh[n]*nj_mesh[n]))
+            data = np.fromfile(f,dtype=np.float32,count=ni_mesh[n]*nj_mesh[n])
+            #g[name].append(data)
 
             # Reshape the data into the correct numpy array shape, note Fortran
             # writes the data with the dimensions in the reverse order
-            g[name][nn] = np.reshape(g[name][nn],[ni_mesh[n],nj_mesh[n]],order='F')
+            data = np.reshape(data,[ni_mesh[n],nj_mesh[n]],order='F')
+            g[name].append(data)
 
         # Always read the logical array describing the wall position
         g['wall'].append(np.fromfile(f,dtype=np.int32,count=ni*nj) == 1)
@@ -637,6 +644,9 @@ def read_case(filename):
         # Read the flowfield data if written as an initial guess or full solution
         if outtype > 1:
             fieldnames = ['ro','roe','rovx','rovy']
+            if 'ro' not in g.keys():
+                for name in fieldnames:
+                    g[name] = []
             for n,name in enumerate(fieldnames):
                 g[name].append(np.fromfile(f,dtype=np.float32,count=ni*nj))
                 g[name][nn] = np.reshape(g[name][nn],[ni,nj],order='F')
@@ -644,19 +654,18 @@ def read_case(filename):
         # Read the cell increment only if the file is a full solution
         if outtype > 2:
             fieldnames = ['dro','droe','drovx','drovy']
+            if 'dro' not in g.keys():
+                for name in fieldnames:
+                    g[name] = []
             ni = g['ni'][nn]-1; nj = g['nj'][nn]-1;
             for n,name in enumerate(fieldnames):
                 g[name].append(np.fromfile(f,dtype=np.float32,count=ni*nj))
                 g[name][nn] = np.reshape(g[name][nn],[ni,nj],order='F')
 
-        # Close the file
-        f.close()
+    # Close the file
+    f.close()
 
-    o = []
-    for i in range(5):
-        o.append(cut_block(g, i))
-
-    return(o)
+    return(g)
    
 ################################################################################
 

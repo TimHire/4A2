@@ -73,6 +73,8 @@
 
 !         Mesh size for all cases
           integer :: ni, nj
+          
+          real ::  dt, dt_total
 
 !         Mesh coordinate data in 2D matrices
           real, dimension(:,:), allocatable :: x, y, area, lx_i, ly_i, &
