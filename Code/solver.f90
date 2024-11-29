@@ -117,12 +117,14 @@
 		  call apply_bconds(av,g,bcs,constant_enthalpy)
 
 	!         Perform the timestep to update the primary flow variables
-		  call euler_iteration(av,g,constant_enthalpy)
+		  call euler_iteration(av,g,p,constant_enthalpy)
  	  end do
+ 	  
  	  if (av%nn > 1) then
       	  !   Put mesh smoothing function in
-          call patch_smoothing(av,g,p)
+              call patch_smoothing(av,g,p)
           end if
+      
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
           if(mod(av%nstep,nconv) == 0) then

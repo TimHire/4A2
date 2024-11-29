@@ -1,5 +1,5 @@
 
-      subroutine euler_iteration(av,g,constant_enthalpy)
+      subroutine euler_iteration(av,g,p,constant_enthalpy)
 
 !     This subroutine calculates the fluxes into each cell and then sums them to
 !     update the primary flow properties
@@ -11,6 +11,7 @@
       implicit none
       type(t_appvars), intent(in) :: av
       type(t_grid), intent(inout) :: g(:)
+      type(t_match), intent(inout) :: p(:)
       logical, intent(in) :: constant_enthalpy
       real, allocatable :: mass_i(:,:), flux_i(:,:)
       real, allocatable :: mass_j(:,:), flux_j(:,:)
@@ -90,8 +91,14 @@
       end if 
       g(n)%rovx = g(n)%rovx_start
       g(n)%rovy = g(n)%rovy_start
+      
+      
 
-!     Add artificial viscosity by smoothing all of the primary flow variables
+      
+      
+      
+     
+      !     Add artificial viscosity by smoothing all of the primary flow variables
       call smooth_array(av,g(n)%ro)
       if (.not. constant_enthalpy) then
       call smooth_array(av,g(n)%roe)
@@ -100,7 +107,6 @@
       call smooth_array(av,g(n)%rovy)
       
       deallocate(mass_i, flux_i, mass_j, flux_j)
-      
       end do
 
       
