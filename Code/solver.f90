@@ -24,9 +24,9 @@
       real :: d_max = 1, d_avg = 1
       integer :: n
       integer :: nstep, nconv = 5, ncheck = 5
-      integer :: nrkut, nrkuts = 1
+      integer :: nrkut, nrkuts = 4
       logical :: geometric_mesh = .false.
-      logical :: constant_enthalpy = .false.
+      logical :: constant_enthalpy = .true.
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
@@ -71,7 +71,7 @@
 !            flow in the i-direction allows a calculation of a better
 !            approximation to the converged flowfield and so the time to
 !            solution will be reduced. You will need to complete this option.
-      call flow_guess(av,g,bcs,2)
+      call flow_guess(av,g,bcs,1)
 
 !     Optional output call to inspect the initial guess of the flowfield
       call write_output(av,g,2)
@@ -95,10 +95,14 @@
       open(unit=11,file='stopit')
       write(11,*) 0; close(11); 
 
+
 !     Start the time stepping do loop for "nsteps". This is now the heart of the
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
       do nstep = 1, av%nsteps
+      
+          
+      
       
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
@@ -122,9 +126,12 @@
  	  
  	  if (av%nn > 1) then
       	  !   Put mesh smoothing function in
-              call patch_smoothing(av,g,p)
+      	     ! write(6,*) "got passed the if statement"
+              call patch_mesh(av,p,g)
+            !  write(6,*) "exiting patch smoothing"
+          !  write(6,*) g(p(1)%n_1)%ro(p(1)%i_1(:),p(1)%j_1(:))
+              ! call check_patch(p,g)
           end if
-      
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
           if(mod(av%nstep,nconv) == 0) then

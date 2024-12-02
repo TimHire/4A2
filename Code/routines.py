@@ -604,7 +604,7 @@ def read_case(filename):
     elif 'final' in filename:
         outtype = 3
 
-    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5}
+    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5,"turbine_h":1}
     nblock = nblocks[filename[10:-4]]
 
     # Initialise the dictionary to store the data

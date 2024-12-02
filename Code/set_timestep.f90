@@ -11,9 +11,7 @@
       type(t_grid), intent(inout) :: g(:)
       type(t_bconds), intent(in) :: bcs
       real :: astag, v_max
-      integer :: n
-      
-      do n=1,av%nn
+
 
 !     Calculate the stagnation speed of sound from the inlet stagnation
 !     temperature and gas constants
@@ -30,7 +28,7 @@
 
 !     Calculate the timestep using the CFL number and store it in "av%dt"
 !     INSERT
-      av%dt_total = g(n)%l_min * av%cfl / v_max
+      av%dt_total = g(1)%l_min * av%cfl / v_max
       !g(n)%dt_total = g(n)%l_min * av%cfl / v_max
 
 !     Print the calculated timestep and some intermediate values
@@ -41,7 +39,7 @@
       write(6,*) 'Calculated v_max:', v_max
       write(6,*)
       
-      end do
+      
 
       end subroutine set_timestep
 

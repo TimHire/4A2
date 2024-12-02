@@ -11,8 +11,8 @@ from routines import *
 
 def main():
 
-    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5}
-    inletblock = {"naca":4, "bump":1, "bend":1, "turbine_c":4}
+    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5, "turbine_h":1}
+    inletblock = {"naca":4, "bump":1, "bend":1, "turbine_c":4, "turbine_h":1}
 
     # Construct full filenames to read the run data
     inname = 'input_' + sys.argv[-1] + '.txt'

@@ -67,5 +67,7 @@
       write(6,*)
       
       end do
+      
+      g(1)%l_min = minval([(g(n)%l_min, n=1, av%nn)])
 
       end subroutine calc_areas

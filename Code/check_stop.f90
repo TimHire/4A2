@@ -8,23 +8,17 @@
       use types
       implicit none
       type(t_appvars), intent(in) :: av
-      type(t_grid), intent(inout) :: g(:)
+      type(t_grid), intent(inout) :: g
       integer :: ifstop
-        integer :: n
       
 
 !     Check the stop file
       open(unit=11,file='stopit')
       read(11,*) ifstop; close(11);
 
-      do n=1,av%nn
-!     Check for NaNs in the density
-      if(isnan(sum(g(n)%ro))) then
-          ifstop = 2
-          write(6,*) 'NaN detected, stopping the solver'
-      end if
-      
-      end do
+
+      call check_density(g, av,ifstop)
+
      
 !     Write output file if stop file is not zero
       if(ifstop > 1) then
