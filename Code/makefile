@@ -16,10 +16,10 @@ FC = gfortran
 # Option of Compilation
 
 # Debug option
-FFLAGS = -fcheck=all -g
+#FFLAGS = -fcheck=all -g
 
 # Select the optimising option by deleting # in the following line
-#FFLAGS = -O2
+FFLAGS = -O2
 
 # Compile the executable and name it "solver.x" using "-o"
 solver : $(OBS)

@@ -50,6 +50,7 @@ def main():
 
 
     c = cut_i(blocks[inletblock[sys.argv[-1]] - 1], 0)         # Select the right block which contains the inlet
+    #c = cut_i(blocks[3], 0)         # Select the right block which contains the inlet
     p_ref, l = area_av(c,'p')
     pstag_ref, mass = mass_av(c,'pstag')
 
@@ -58,13 +59,36 @@ def main():
         cp0 = (blocks[n]['pstag'] - pstag_ref) / (pstag_ref - p_ref)
         blocks[n]['cp'] = cp
         blocks[n]['cp0'] = cp0
+        ctstag = blocks[n]['tstag'] / blocks[0]['tstag'][0][0]
+        blocks[n]['ctstag'] = ctstag
 
     #g['cp'] = (g['p'] - p_ref) / (pstag_ref - p_ref)
+    
+    if sys.argv[-1] == "naca":	#If this is choosing the aerofoil case to calculate CL
+        surface_cp = blocks[0]['cp'][:,0]
+        surface_x  = blocks[0]['x'][:,0]
+        surface_y  = blocks[0]['y'][:,0]
+        node_distance = np.hypot(surface_x, surface_y)
+        
+       	lower_cp = surface_cp[:97] 
+       	upper_cp = surface_cp[97:]
+       	lower_distance = surface_x[:97]
+       	upper_distance = surface_x[97:]
+        
+        integral = 0
+        for i in range(len(surface_cp) - 1):
+            integral += 0.5 * (surface_cp[i] + surface_cp[i+1]) * (surface_x[i] - surface_x[i+1])
+        print("Calculated Cl value: ", integral)
+        
+     #   plt.plot(surface_x, -surface_cp)
+      #  plt.plot(surface_x[97], -surface_cp[97], "ro")
+       # plt.show()
 
+    
 
     # Specify the parameters to plot
-    fieldnames = ['cp', 'mach'];
-    colnames = ['Static pressure coefficient','Mach number']
+    fieldnames = ['cp', 'mach', 'ctstag', 'rovx', 'rovy'];
+    colnames = ['Static pressure coefficient','Mach number','Stagnation temperature', 'vx', 'vy']
 
 
         # Plot the calculated non-dimensional parameters to show the flow solution

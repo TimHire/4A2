@@ -10,7 +10,7 @@
 from routines import *
 
 def main():
-    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5}
+    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5, "turbine_h":1}
     # Construct full filenames to read the guess data
     filename = 'out_guess_' + sys.argv[-1] + '.bin'
     inname = 'input_' + sys.argv[-1] + '.txt'

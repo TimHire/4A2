@@ -11,7 +11,7 @@ from routines import *
 
 def main():
 
-    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5}
+    nblocks = {"naca":5, "bump":1, "bend":1, "turbine_c":5, "turbine_h":1}
 
     # Construct full filename to read the grid data
     filename = 'out_coord_' + sys.argv[-1] + '.bin'

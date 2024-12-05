@@ -51,12 +51,12 @@
       g(n_in)%p(1,:) = bcs%pstag * (bcs%ro / bcs%rostag) ** (av%gam)
       g(n_in)%vx(1,:) = sqrt(2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1))) * cos(bcs%alpha)
       g(n_in)%vy(1,:) = sqrt(2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1))) * sin(bcs%alpha)
-      g(n_in)%rovx_start(1,:) = g(n_in)%vx(1,:) * bcs%ro
-      g(n_in)%rovy_start(1,:) = g(n_in)%vy(1,:) * bcs%ro
+!      g(n_in)%rovx_start(1,:) = g(n_in)%vx(1,:) * bcs%ro
+!      g(n_in)%rovy_start(1,:) = g(n_in)%vy(1,:) * bcs%ro
       
       if (.not. constant_enthalpy) then
-      g(n_in)%roe_start(1,:) = bcs%ro * (av%cv * bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1) &
-      + 0.5 * bcs%ro * 2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)))
+!      g(n_in)%roe_start(1,:) = bcs%ro * (av%cv * bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1) &
+!      + 0.5 * bcs%ro * 2 * av%cp * (bcs%tstag - bcs%tstag * (bcs%ro / bcs%rostag) ** (av%gam - 1)))
       g(n_in)%hstag(1,:) = (g(n_in)%roe(1,:) + g(n_in)%p(1,:)) / bcs%ro 
       end if
 

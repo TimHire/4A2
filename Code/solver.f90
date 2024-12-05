@@ -26,7 +26,7 @@
       integer :: nstep, nconv = 5, ncheck = 5
       integer :: nrkut, nrkuts = 4
       logical :: geometric_mesh = .false.
-      logical :: constant_enthalpy = .true.
+      logical :: constant_enthalpy = .false.
 
 !     Read in the data on the run settings
       call read_settings(av,bcs)
@@ -71,7 +71,7 @@
 !            flow in the i-direction allows a calculation of a better
 !            approximation to the converged flowfield and so the time to
 !            solution will be reduced. You will need to complete this option.
-      call flow_guess(av,g,bcs,1)
+      call flow_guess(av,g,bcs,2)
 
 !     Optional output call to inspect the initial guess of the flowfield
       call write_output(av,g,2)
@@ -81,8 +81,6 @@
       call set_timestep(av,g,bcs)
       
       
-      
- ! EITHER NEED TO PUT SET_TIMESTEP IN THE MAIN LOOP OR NEED TO MAKE THE MAIN LOOP ITERATE AS A WHOLE AGAIN
       
 
 !     Open file to store the convergence history. This is human readable during
@@ -100,9 +98,7 @@
 !     program, you should aim to program anything inside this loop to operate as
 !     efficiently as you can.
       do nstep = 1, av%nsteps
-      
-          
-      
+             
       
 !         Update record of nstep to use in subroutines
           av%nstep = nstep
@@ -119,19 +115,24 @@
 
 	!         Apply inlet and outlet values at the boundaries of the domain
 		  call apply_bconds(av,g,bcs,constant_enthalpy)
+		  
 
 	!         Perform the timestep to update the primary flow variables
 		  call euler_iteration(av,g,p,constant_enthalpy)
+		  
+		  
  	  end do
  	  
- 	  if (av%nn > 1) then
+ 	  call patch_mesh(av,p,g)
+ 	  
+ 	  !if (av%nn > 1) then
       	  !   Put mesh smoothing function in
       	     ! write(6,*) "got passed the if statement"
               call patch_mesh(av,p,g)
             !  write(6,*) "exiting patch smoothing"
           !  write(6,*) g(p(1)%n_1)%ro(p(1)%i_1(:),p(1)%j_1(:))
               ! call check_patch(p,g)
-          end if
+         ! end if
 
 !         Write out summary every "nconv" steps and update "davg" and "dmax" 
           if(mod(av%nstep,nconv) == 0) then
